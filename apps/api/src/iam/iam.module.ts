@@ -16,6 +16,7 @@ import { GoogleAuthenticationService } from './authentication/social/google-auth
 import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller'
 import { EmailModule } from '../email/email.module'
 import { ConfigEnum } from '../shared/config.enum'
+import { TurnstileService } from './authentication/turnstile.service'
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ConfigEnum } from '../shared/config.enum'
     },
     AccessTokenGuard,
     GoogleAuthenticationService,
+    TurnstileService,
   ],
   controllers: [AuthenticationController, GoogleAuthenticationController],
 })

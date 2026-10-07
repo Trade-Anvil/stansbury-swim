@@ -19,6 +19,16 @@ const LOGO_URL = 'https://stansburyswim.com/images/logo.png'
 const SITE_URL = 'https://stansburyswim.com'
 const DASHBOARD_URL = 'https://stansburyswim.com/dashboard'
 
+// Names and other values people type in end up inside email HTML. Escaping them stops a sign-up
+// from smuggling links or markup into mail that goes out under our domain.
+const escapeHtml = (value: string | null | undefined): string =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
 @Injectable()
 export class EmailService {
   constructor(
@@ -67,6 +77,8 @@ export class EmailService {
       from: FROM_ADDRESS,
       subject: 'Reset your password',
       html,
+      // The link resets the account, so a copy in the shared inbox would let anyone there take it over.
+      bccOffice: false,
     })
   }
 
@@ -89,7 +101,7 @@ export class EmailService {
     const html = this.renderEmailLayout(
       'Confirm your email address',
       `${this.renderHeading('Confirm your email address')}
-      <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">Hi ${user.firstName},</p>
+      <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">Hi,</p>
       <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">${
         isChange
           ? 'You asked to change the email address on your Stansbury Swim account to this one. Click below to confirm it. Until you do, we will keep sending to your old address.'
@@ -106,6 +118,7 @@ export class EmailService {
       from: FROM_ADDRESS,
       subject: 'Confirm your email address',
       html,
+      bccOffice: false,
     })
   }
 
@@ -133,7 +146,7 @@ export class EmailService {
     const html = this.renderEmailLayout(
       "You're off the waitlist!",
       `${this.renderHeading("You're off the waitlist!")}
-      <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">Hi ${user.firstName},</p>
+      <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">Hi ${escapeHtml(user.firstName)},</p>
       <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">Good news &mdash; a spot has opened up and you're now able to purchase lessons with Stansbury Swim. Click below to head to your dashboard and complete your purchase.</p>
       ${this.renderButton(purchaseUrl, 'Purchase lessons')}
       <p style="margin:24px 0 8px 0;font-size:13px;line-height:1.6;color:#6b7280;">If the button doesn't work, copy and paste this link into your browser:</p>
@@ -211,7 +224,7 @@ export class EmailService {
     const html = this.renderEmailLayout(
       'Lesson Reservation Confirmation',
       `${this.renderHeading('Splash! Your lesson is confirmed')}
-      <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#374151;">${student.name}'s lesson reservation is confirmed. Please arrive at least 5 minutes prior to the lesson. You may cancel this lesson online up to 24 hours before lesson time with no penalty.</p>
+      <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#374151;">${escapeHtml(student.name)}'s lesson reservation is confirmed. Please arrive at least 5 minutes prior to the lesson. You may cancel this lesson online up to 24 hours before lesson time with no penalty.</p>
       ${this.renderInfoCard([
         { label: 'When', value: formattedDateTimeMdt },
         { label: 'Where', value: pool.name },
@@ -270,9 +283,9 @@ export class EmailService {
     const html = this.renderEmailLayout(
       corrected ? 'Lesson Reminder (Corrected)' : 'Lesson Reminder',
       `${this.renderHeading(corrected ? 'Lesson Reminder (Corrected)' : 'Lesson Reminder')}
-      <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">Hello ${user.firstName} ${user.lastName},</p>
+      <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">Hello ${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)},</p>
       ${correctedCallout}
-      <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#374151;">This is a reminder that your lesson for <strong style="color:#142e55;">${student.name}</strong> is scheduled below. Please arrive at least 5 minutes prior to the lesson.</p>
+      <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#374151;">This is a reminder that your lesson for <strong style="color:#142e55;">${escapeHtml(student.name)}</strong> is scheduled below. Please arrive at least 5 minutes prior to the lesson.</p>
       ${this.renderInfoCard([
         { label: 'When', value: formattedDateTimeMdt },
         { label: 'Where', value: pool.name },
@@ -358,6 +371,8 @@ export class EmailService {
     subject: string
     text?: string
     html?: string
+    /** Copy the office inbox. Turn off for anything carrying a sign-in or reset link. */
+    bccOffice?: boolean
   }): Promise<boolean> {
     const key = this.configService.get(ConfigEnum.ResendApiKey)
     const resend = new Resend(key)
@@ -366,7 +381,7 @@ export class EmailService {
       const { data, error } = await resend.emails.send({
         from: options.from,
         to: options.to,
-        bcc: 'info@stansburyswim.com',
+        ...(options.bccOffice === false ? {} : { bcc: 'info@stansburyswim.com' }),
         subject: options.subject,
         ...(options.html ? { html: options.html } : { text: options.text ?? '' }),
       })
@@ -439,7 +454,7 @@ export class EmailService {
       .map(
         r => `<tr>
           <td style="padding:6px 16px 6px 0;font-size:14px;color:#6b7280;vertical-align:top;white-space:nowrap;">${r.label}</td>
-          <td style="padding:6px 0;font-size:14px;color:#142e55;font-weight:600;">${r.value}</td>
+          <td style="padding:6px 0;font-size:14px;color:#142e55;font-weight:600;">${escapeHtml(r.value)}</td>
         </tr>`,
       )
       .join('')

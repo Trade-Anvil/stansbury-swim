@@ -9,14 +9,15 @@ import { z } from 'zod'
 import { setUser } from '@/app/utils/api'
 import { AuthService } from '@/services/api/shared/authService'
 import { ApiError } from '@/api'
+import { Turnstile, turnstileEnabled } from '@/app/components/turnstile'
 
 const registerSchema = z
   .object({
     email: z.string().email('Invalid email address'),
     password: z.string().min(10, 'Password must be at least 10 characters long'),
     confirmPassword: z.string(),
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
+    firstName: z.string().min(1, 'First name is required').max(50, 'First name must be 50 characters or fewer'),
+    lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be 50 characters or fewer'),
     phoneNumber: z.string().min(1, 'Phone number is required'),
   })
   .refine(data => data.password === data.confirmPassword, {
@@ -29,6 +30,8 @@ type RegisterFormData = z.infer<typeof registerSchema>
 export default function RegisterForm() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0)
   const router = useRouter()
 
   const {
@@ -40,16 +43,23 @@ export default function RegisterForm() {
   })
 
   const onSubmit = async (data: RegisterFormData) => {
+    if (turnstileEnabled && !turnstileToken) {
+      setError('Please complete the verification check.')
+      return
+    }
+
     setIsLoading(true)
     setError(null)
 
     try {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...submitData } = data
-      const response = await AuthService.signUp(submitData)
+      const response = await AuthService.signUp({ ...submitData, turnstileToken: turnstileToken ?? undefined })
       setUser(response)
       router.push('/dashboard')
     } catch (err: unknown) {
+      // The token was spent on this attempt, so get a fresh one for the retry.
+      setTurnstileResetKey(key => key + 1)
       if (err instanceof ApiError) {
         setError(err.body.message || 'Registration failed')
       } else {
@@ -159,6 +169,8 @@ export default function RegisterForm() {
             {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>}
           </div>
         </div>
+
+        <Turnstile onToken={setTurnstileToken} resetKey={turnstileResetKey} />
 
         <div>
           <button

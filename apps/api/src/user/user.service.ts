@@ -12,6 +12,7 @@ import { UserRegisterEvent } from './events/user-register.event'
 import { EmailVerificationRequestedEvent } from './events/email-verification-requested.event'
 import { Role } from '@lesson-scheduler/shared'
 import { TransactionService } from 'payment/transaction.service'
+import { sameInboxQuery } from './same-inbox'
 const mapper = (entity: UserEntity): User => {
   return {
     id: entity._id.toString(),
@@ -70,7 +71,7 @@ export class UserService {
   async signUp(signUpDto: SignUpDto, hashedPassword: string, salt: string): Promise<User> {
     const _id = new Types.ObjectId()
 
-    const existingUser = await this.model.findOne({ email: signUpDto.email.toLowerCase() })
+    const existingUser = await this.model.findOne(sameInboxQuery(signUpDto.email))
     if (existingUser) {
       throw new ConflictException('User already exists')
     }
@@ -86,13 +87,15 @@ export class UserService {
       failedLoginAttempts: 0,
       lastFailedLogin: null,
       emailVerified: false,
+      verificationEmailSentAt: new Date(),
     })
     const entity = await this.model.findById(_id)
     if (!entity) {
       throw new Error('User not found')
     }
     const user = mapper(entity)
-    await this.eventBus.publish(new UserRegisterEvent(user))
+    // The welcome email waits until the address is confirmed (see confirmEmailVerification), so a
+    // sign-up made with a stranger's address sends them one message instead of two.
     await this.eventBus.publish(new EmailVerificationRequestedEvent(user, user.email))
     return user
   }
@@ -345,7 +348,13 @@ export class UserService {
     if (!updated) {
       throw new NotFoundException('User not found')
     }
-    return mapper(updated)
+    const user = mapper(updated)
+    // Only a sign-up confirming for the first time gets the welcome. Grandfathered accounts have no
+    // flag, and a verified user confirming a changed address already got theirs.
+    if (entity.emailVerified === false) {
+      await this.eventBus.publish(new UserRegisterEvent(user))
+    }
+    return user
   }
 
   async remove(id: string): Promise<void> {
@@ -436,6 +445,36 @@ export class UserService {
         },
       },
     )
+  }
+
+  /**
+   * Stamps the reset-request time unless a link already went out within `cooldownMs`. Returns
+   * false inside the cooldown. The check and the stamp are one atomic update, so a burst of
+   * simultaneous requests sends one email, not one per request.
+   */
+  public async claimPasswordResetSlot(userId: string, cooldownMs: number): Promise<boolean> {
+    return this.claimCooldown(userId, 'resetRequestedAt', cooldownMs)
+  }
+
+  /** Same as claimPasswordResetSlot, for resending the confirm-your-address link. */
+  public async claimVerificationEmailSlot(userId: string, cooldownMs: number): Promise<boolean> {
+    return this.claimCooldown(userId, 'verificationEmailSentAt', cooldownMs)
+  }
+
+  private async claimCooldown(
+    userId: string,
+    field: 'resetRequestedAt' | 'verificationEmailSentAt',
+    cooldownMs: number,
+  ): Promise<boolean> {
+    const now = new Date()
+    const result = await this.model.updateOne(
+      {
+        _id: new Types.ObjectId(userId),
+        $or: [{ [field]: { $exists: false } }, { [field]: null }, { [field]: { $lt: new Date(now.getTime() - cooldownMs) } }],
+      },
+      { $set: { [field]: now } },
+    )
+    return result.modifiedCount === 1
   }
 
   public async updatePassword(user: UserForAuth, password: string, salt: string) {

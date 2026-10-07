@@ -41,6 +41,15 @@ export class UserEntity {
   @Prop({ required: false })
   resetToken: string
 
+  // When the last reset link went out. Requests inside the cooldown are dropped so the
+  // forgot-password form can't be used to flood someone's inbox.
+  @Prop({ required: false })
+  resetRequestedAt?: Date
+
+  // Same idea for the confirm-your-address link. Stamped at sign-up and on each resend.
+  @Prop({ required: false })
+  verificationEmailSentAt?: Date
+
   // Absent means verified. Accounts that predate email verification are grandfathered in
   // rather than backfilled, so only sign-ups from here on start out unverified.
   @Prop({ required: false })

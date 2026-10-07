@@ -2477,6 +2477,10 @@
             "type": "string",
             "example": "(555) 555-5555",
             "description": "User phone number"
+          },
+          "turnstileToken": {
+            "type": "string",
+            "description": "Cloudflare Turnstile token. Required once TURNSTILE_SECRET_KEY is set."
           }
         },
         "required": [
@@ -2530,6 +2534,10 @@
             "type": "string",
             "example": "user@example.com",
             "description": "User email address"
+          },
+          "turnstileToken": {
+            "type": "string",
+            "description": "Cloudflare Turnstile token. Required once TURNSTILE_SECRET_KEY is set."
           }
         },
         "required": [

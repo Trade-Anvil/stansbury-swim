@@ -23,6 +23,9 @@ export class AuthenticationService {
   private readonly logger = new Logger(AuthenticationService.name)
   private readonly MAX_FAILED_ATTEMPTS = 5
   private readonly LOCKOUT_TIME = 15 * 60 * 1000 // 15 minutes in milliseconds
+  // Minimum gap between reset or confirmation links to one account. Earlier links stay valid in
+  // the meantime, so a person who asks twice still has a working email.
+  private readonly EMAIL_LINK_COOLDOWN = 5 * 60 * 1000
 
   constructor(
     private readonly userService: UserService,
@@ -144,6 +147,11 @@ export class AuthenticationService {
         // Don't reveal whether the email exists
         return
       }
+      if (!(await this.userService.claimPasswordResetSlot(user.id, this.EMAIL_LINK_COOLDOWN))) {
+        // Same response as a send, so the cooldown doesn't reveal that the account exists either.
+        this.logger.warn(`Skipped password reset for user ${user.id}: requested again inside the cooldown`)
+        return
+      }
       await this.emailService.sendResetPasswordLink(email)
     } catch (err: any) {
       this.logger.error(`Failed to process forgot password: ${err.message}`, err.stack)
@@ -192,6 +200,12 @@ export class AuthenticationService {
     }
     if (user.emailVerified && !user.pendingEmail) {
       throw new BadRequestException('Email address is already confirmed')
+    }
+    if (!(await this.userService.claimVerificationEmailSlot(user.id, this.EMAIL_LINK_COOLDOWN))) {
+      // A link went out a few minutes ago and still works. Report success so the banner reads
+      // "sent" instead of failing, without mailing the address again.
+      this.logger.warn(`Skipped verification resend for user ${user.id}: requested again inside the cooldown`)
+      return
     }
     await this.emailService.sendVerifyEmailLink(user, user.pendingEmail ?? user.email)
   }

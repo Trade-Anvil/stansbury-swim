@@ -2,6 +2,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common'
 import { EventBus } from '@nestjs/cqrs'
 import { UserService } from './user.service'
 import { EmailVerificationRequestedEvent } from './events/email-verification-requested.event'
+import { UserRegisterEvent } from './events/user-register.event'
 
 // Valid 24-char hex so `new Types.ObjectId(...)` doesn't throw.
 const USER_ID = '507f1f77bcf86cd799439021'
@@ -145,6 +146,27 @@ describe('UserService email verification', () => {
       expect(write.$set).not.toHaveProperty('email')
     })
 
+    it('sends the welcome email when a sign-up confirms for the first time', async () => {
+      model.findOne.mockResolvedValueOnce(userEntity({ emailVerificationToken: 'tok', emailVerified: false }))
+      model.findById.mockResolvedValue(userEntity({ emailVerified: true }))
+
+      await service.confirmEmailVerification('tok')
+
+      expect(eventBus.publish).toHaveBeenCalledTimes(1)
+      expect(eventBus.publish.mock.calls[0][0]).toBeInstanceOf(UserRegisterEvent)
+    })
+
+    it('does not re-send the welcome when a verified user confirms a changed address', async () => {
+      model.findOne
+        .mockResolvedValueOnce(userEntity({ pendingEmail: NEW_EMAIL, emailVerificationToken: 'tok', emailVerified: true }))
+        .mockResolvedValueOnce(null)
+      model.findById.mockResolvedValue(userEntity({ email: NEW_EMAIL, emailVerified: true }))
+
+      await service.confirmEmailVerification('tok')
+
+      expect(eventBus.publish).not.toHaveBeenCalled()
+    })
+
     it('rejects an unknown or already-redeemed token', async () => {
       model.findOne.mockResolvedValue(null)
 
@@ -159,6 +181,57 @@ describe('UserService email verification', () => {
 
       await expect(service.confirmEmailVerification('tok')).rejects.toThrow(ConflictException)
       expect(model.updateOne).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('signUp', () => {
+    const signUpDto = {
+      email: 'j.a.ne.doe@gmail.com',
+      password: 'irrelevant',
+      firstName: 'Jane',
+      lastName: 'Doe',
+      phoneNumber: '5555555555',
+    }
+
+    it('sends only the confirmation email, holding the welcome until the address is confirmed', async () => {
+      model.findById.mockResolvedValue(userEntity({ email: signUpDto.email, emailVerified: false }))
+
+      await service.signUp(signUpDto as any, 'hash', 'salt')
+
+      expect(eventBus.publish).toHaveBeenCalledTimes(1)
+      expect(eventBus.publish.mock.calls[0][0]).toBeInstanceOf(EmailVerificationRequestedEvent)
+      expect(model.create.mock.calls[0][0].verificationEmailSentAt).toBeInstanceOf(Date)
+    })
+
+    it('rejects a dotted variant of a Gmail address that is already registered', async () => {
+      model.findOne.mockResolvedValue(userEntity({ email: 'janedoe@gmail.com' }))
+
+      await expect(service.signUp(signUpDto as any, 'hash', 'salt')).rejects.toThrow(ConflictException)
+
+      const filter = model.findOne.mock.calls[0][0]
+      expect(new RegExp(filter.email.$regex, filter.email.$options).test('janedoe@gmail.com')).toBe(true)
+      expect(model.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('email cooldowns', () => {
+    it('grants the slot when the atomic update matched', async () => {
+      model.updateOne.mockResolvedValue({ modifiedCount: 1 })
+
+      await expect(service.claimPasswordResetSlot(USER_ID, 60_000)).resolves.toBe(true)
+
+      const [filter, update] = model.updateOne.mock.calls[0]
+      expect(filter.$or).toEqual(
+        expect.arrayContaining([{ resetRequestedAt: { $lt: expect.any(Date) } }]),
+      )
+      expect(update.$set.resetRequestedAt).toBeInstanceOf(Date)
+    })
+
+    it('refuses the slot inside the cooldown', async () => {
+      model.updateOne.mockResolvedValue({ modifiedCount: 0 })
+
+      await expect(service.claimVerificationEmailSlot(USER_ID, 60_000)).resolves.toBe(false)
+      expect(model.updateOne.mock.calls[0][1].$set).toHaveProperty('verificationEmailSentAt')
     })
   })
 

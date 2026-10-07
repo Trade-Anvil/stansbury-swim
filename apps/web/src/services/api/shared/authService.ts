@@ -19,8 +19,8 @@ export class AuthService extends BaseService {
     return AuthenticationService.authenticationControllerLogout()
   }
 
-  static async forgotPassword(email: string) {
-    return AuthenticationService.authenticationControllerForgotPassword({ email })
+  static async forgotPassword(email: string, turnstileToken?: string) {
+    return AuthenticationService.authenticationControllerForgotPassword({ email, turnstileToken })
   }
 
   static async resetPassword(token: string, password: string) {

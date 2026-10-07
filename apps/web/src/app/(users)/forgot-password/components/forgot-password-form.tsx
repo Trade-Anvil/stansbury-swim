@@ -2,19 +2,27 @@
 import React, { useState } from 'react'
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
 import { AuthService } from '@/services/api/shared/authService'
+import { Turnstile, turnstileEnabled } from '@/app/components/turnstile'
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(false)
 
+    if (turnstileEnabled && !turnstileToken) {
+      setError('Please complete the verification check.')
+      return
+    }
+
     try {
-      const response = await AuthService.forgotPassword(email)
+      const response = await AuthService.forgotPassword(email, turnstileToken ?? undefined)
 
       if (!response) {
         throw new Error('Failed to send reset password email')
@@ -22,7 +30,10 @@ export default function ForgotPasswordForm() {
 
       setSuccess(true)
     } catch (err: any) {
-      setError(err.message)
+      setError(err.body?.message || err.message)
+    } finally {
+      // Tokens work once, so any further submit needs a fresh check.
+      setTurnstileResetKey(key => key + 1)
     }
   }
 
@@ -45,6 +56,8 @@ export default function ForgotPasswordForm() {
           />
         </div>
       </div>
+
+      <Turnstile onToken={setTurnstileToken} resetKey={turnstileResetKey} />
 
       <div>
         <button

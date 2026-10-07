@@ -12,4 +12,5 @@ export enum ConfigEnum {
   PaypalEnvironment = 'PAYPAL_ENVIRONMENT',
   SupabaseUrl = 'SUPABASE_URL',
   SupabaseServiceRoleKey = 'SUPABASE_SERVICE_ROLE_KEY',
+  TurnstileSecretKey = 'TURNSTILE_SECRET_KEY',
 }

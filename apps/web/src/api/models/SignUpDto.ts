@@ -23,5 +23,9 @@ export type SignUpDto = {
      * User phone number
      */
     phoneNumber: string;
+    /**
+     * Cloudflare Turnstile token. Required once TURNSTILE_SECRET_KEY is set.
+     */
+    turnstileToken?: string;
 };
 

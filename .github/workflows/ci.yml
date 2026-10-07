@@ -21,8 +21,9 @@ jobs:
       # Cache node_modules
       - uses: actions/setup-node@v7
         with:
-          # Match the Dockerfile the API ships with.
-          node-version: 22
+          # Match the Dockerfile and package.json engines. Node 24 ships npm 11, which wrote the lockfile;
+          # npm 10 (Node 22) rejects it as out of sync.
+          node-version: 24
           cache: 'npm'
       - run: npm ci
       - uses: nrwl/nx-set-shas@v5

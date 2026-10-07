@@ -48,9 +48,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const normalizedPath = pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
   const isPublicPath = PUBLIC_PATHS.includes(normalizedPath)
 
-  const fetchUserDetails = useCallback(async () => {
-    setIsLoading(true)
-    setError(null)
+  // Reads the stored session and loads the user.
+  const readSessionAndFetchUser = useCallback(async () => {
     try {
       const user = localStorage.getItem('user')
       const token = user ? JSON.parse(user).accessToken : null
@@ -107,9 +106,29 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   }, [isPublicPath])
 
+  // Every state update happens in a promise callback, after the effect that starts the load has returned,
+  // so loading the user never triggers a synchronous re-render.
+  const loadUserDetails = useCallback(() => Promise.resolve().then(readSessionAndFetchUser), [readSessionAndFetchUser])
+
+  // Refresh after a change (sign-in, profile save, waiver): show the loading state, then reload.
+  const fetchUserDetails = useCallback(() => {
+    setIsLoading(true)
+    setError(null)
+    return loadUserDetails()
+  }, [loadUserDetails])
+
+  // Moving between public and protected pages reloads the user below, so show the loading state again.
+  // Done during render rather than in an effect, per https://react.dev/learn/you-might-not-need-an-effect
+  const [loadedForPublicPath, setLoadedForPublicPath] = useState(isPublicPath)
+  if (loadedForPublicPath !== isPublicPath) {
+    setLoadedForPublicPath(isPublicPath)
+    setIsLoading(true)
+    setError(null)
+  }
+
   useEffect(() => {
-    fetchUserDetails()
-  }, [fetchUserDetails])
+    loadUserDetails()
+  }, [loadUserDetails])
 
   const exitImpersonation = async () => {
     try {

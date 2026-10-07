@@ -9,18 +9,19 @@ interface CreditsContextType {
 
 const CreditsContext = createContext<CreditsContextType | null>(null)
 
+const loadPrivateCredits = async () => {
+  const response = await TransactionsService.getMyCreditBalance()
+  return response.balances.find((b: any) => b.creditType === 'private')?.balance ?? 0
+}
+
 export const CreditsProvider = ({ children }: { children: React.ReactNode }) => {
   const [credits, setCredits] = useState(0)
 
-  useEffect(() => {
-    fetchCredits()
-  }, [])
+  const fetchCredits = () => loadPrivateCredits().then(setCredits)
 
-  const fetchCredits = async () => {
-    const response = await TransactionsService.getMyCreditBalance()
-    const credits = response.balances.find((b: any) => b.creditType === 'private')?.balance ?? 0
-    setCredits(credits)
-  }
+  useEffect(() => {
+    loadPrivateCredits().then(setCredits)
+  }, [])
 
   return <CreditsContext.Provider value={{ credits, refreshCredits: fetchCredits }}>{children}</CreditsContext.Provider>
 }

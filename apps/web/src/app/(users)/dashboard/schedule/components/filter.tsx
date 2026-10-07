@@ -1,6 +1,6 @@
 'use client'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useMemo, useState, useSyncExternalStore } from 'react'
 import {
   Dialog,
   DialogPanel,
@@ -36,6 +36,13 @@ const monthNames = Array.from({ length: 4 }, (_, i) => {
   return date.toLocaleString('default', { month: 'long' })
 })
 
+// Nothing to subscribe to: these only tell the server render apart from the browser.
+const subscribeToNothing = () => () => {
+  // nothing to unsubscribe from
+}
+const getIsClient = () => true
+const getIsServer = () => false
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
@@ -69,7 +76,9 @@ export default function Filter({
 }: FilterProps) {
   const [open, setOpen] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState(0)
-  const [calendar, setCalendar] = useState<Array<CalendarDay>>([])
+  // The calendar is built from the browser's clock and timezone, so it stays empty for the server
+  // render and hydration and fills in on the client, which avoids a hydration mismatch.
+  const isClient = useSyncExternalStore(subscribeToNothing, getIsClient, getIsServer)
 
   const poolSection = { id: 'pool', name: 'Pool', options: pools }
   const instructorSection = { id: 'instructor', name: 'Instructor', options: instructors }
@@ -109,7 +118,10 @@ export default function Filter({
     )
   }
 
-  useEffect(() => {
+  const calendar = useMemo((): Array<CalendarDay> => {
+    if (!isClient) {
+      return []
+    }
     // TODO get this from the backend API and populate the days with a field indicating if the day has a lesson available.
     // populate the next 4 months in the calendar starting from today
     let cal = Array.from({ length: 4 }, (_, i) => {
@@ -151,8 +163,8 @@ export default function Filter({
 
       return days
     }).flat()
-    setCalendar(cal)
-  }, [selectedDate])
+    return cal
+  }, [isClient, selectedDate])
 
   return (
     <div className="bg-gray-50">

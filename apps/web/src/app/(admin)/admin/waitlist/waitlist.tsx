@@ -28,15 +28,9 @@ export default function WaitlistList() {
   const [sortKey, setSortKey] = useState<SortKey>('newest')
   const [bulkArchiving, setBulkArchiving] = useState(false)
 
-  const fetchConfig = async () => {
-    const response = await ConfigService.findOne()
-    setWaitlistEnabled(response.waitlistEnabled)
-  }
+  const fetchConfig = () => ConfigService.findOne().then(response => setWaitlistEnabled(response.waitlistEnabled))
 
-  const fetchWaitlist = async () => {
-    const response = await WaitlistService.waitlistControllerFindAll(showArchived)
-    setWaitlist(response)
-  }
+  const fetchWaitlist = () => WaitlistService.waitlistControllerFindAll(showArchived).then(setWaitlist)
 
   useEffect(() => {
     fetchConfig()

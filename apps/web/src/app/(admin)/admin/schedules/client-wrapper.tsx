@@ -21,20 +21,29 @@ export default function ClientWrapper() {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedLessonType, setSelectedLessonType] = useState('')
 
-  const fetchSchedules = async () => {
-    try {
-      const data = await ScheduleService.findAll()
-      setSchedules(data)
-    } catch (error) {
-      console.error('Failed to fetch schedules:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const fetchSchedules = () =>
+    ScheduleService.findAll()
+      .then(setSchedules)
+      .catch(error => console.error('Failed to fetch schedules:', error))
+      .finally(() => setIsLoading(false))
 
   useEffect(() => {
     fetchSchedules()
   }, [])
+
+  // Changing a filter goes back to the first page.
+  const changeInstructor = (instructor: string) => {
+    setSelectedInstructor(instructor)
+    setCurrentPage(1)
+  }
+  const changePool = (pool: string) => {
+    setSelectedPool(pool)
+    setCurrentPage(1)
+  }
+  const changeDate = (date: string) => {
+    setSelectedDate(date)
+    setCurrentPage(1)
+  }
 
   // Filter schedules based on selected filters
   const filteredSchedules = useMemo(() => {
@@ -75,11 +84,6 @@ export default function ClientWrapper() {
 
   const paginatedSchedules = filteredSchedules.slice(startIndex, endIndex)
 
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [selectedPool, selectedInstructor, selectedDate])
-
   if (isLoading) {
     return <div>Loading...</div>
   }
@@ -89,9 +93,9 @@ export default function ClientWrapper() {
       <div className="mt-6">
         <TimezoneNotice />
         <Filter
-          onInstructorChange={setSelectedInstructor}
-          onPoolChange={setSelectedPool}
-          onDateChange={setSelectedDate}
+          onInstructorChange={changeInstructor}
+          onPoolChange={changePool}
+          onDateChange={changeDate}
           onLessonTypeChange={setSelectedLessonType}
           selectedInstructor={selectedInstructor}
           selectedPool={selectedPool}

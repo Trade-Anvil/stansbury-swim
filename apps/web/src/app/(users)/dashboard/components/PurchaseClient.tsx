@@ -129,19 +129,23 @@ export default function PurchaseClient({
 
   const noSessionsForSelected = isGroupProduct && availableSchedulesFor(selectedProduct!).length === 0
 
-  // Auto-select the only option (and clear a stale selection carried over from a
-  // previously-selected product) so the user never has to fight an empty/mismatched
-  // session dropdown.
-  useEffect(() => {
-    if (!selectedProduct || selectedProduct.lessonType !== 'group') return
-    const avail = availableSchedulesFor(selectedProduct)
-    if (avail.length === 1) {
-      setSelectedScheduleId(avail[0].id)
-    } else if (!avail.some(s => s.id === selectedScheduleId)) {
-      setSelectedScheduleId('')
+  const selectProduct = (product: ProductResponseDto) => {
+    setSelectedProductId(product.id)
+    // Auto-select the only option (and clear a stale selection carried over from a
+    // previously-selected product) so the user never has to fight an empty/mismatched
+    // session dropdown.
+    if (product.lessonType === 'group') {
+      const avail = availableSchedulesFor(product)
+      if (avail.length === 1) {
+        setSelectedScheduleId(avail[0].id)
+      } else if (!avail.some(s => s.id === selectedScheduleId)) {
+        setSelectedScheduleId('')
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProductId])
+    if (product.credits != 1) {
+      setQuantity(1)
+    }
+  }
 
   const inputsDisabled = isMissingContactInfo || isPaying || !purchaseEnabled || userLoading
   const isPayPalDisabled = inputsDisabled || selectedProductId === '' || isMissingGroupSelections
@@ -162,15 +166,6 @@ export default function PurchaseClient({
     if (isMissingGroupSelections) return 'Select a session and a student to continue.'
     return null
   })()
-
-  useEffect(() => {
-    if (selectedProductId) {
-      const product = products.find(p => p.id == selectedProductId)
-      if (product?.credits != 1) {
-        setQuantity(1)
-      }
-    }
-  }, [selectedProductId])
 
   const paypalCreateOrder = async (): Promise<string> => {
     setError(null)
@@ -420,7 +415,7 @@ export default function PurchaseClient({
                     <input
                       value={product.name}
                       checked={selectedProductId == product.id}
-                      onChange={() => setSelectedProductId(product.id)}
+                      onChange={() => selectProduct(product)}
                       name="product"
                       type="radio"
                       style={{ border: '1px solid #D1D5DB' }}
@@ -484,7 +479,7 @@ export default function PurchaseClient({
                     <input
                       value={product.name}
                       checked={selectedProductId == product.id}
-                      onChange={() => setSelectedProductId(product.id)}
+                      onChange={() => selectProduct(product)}
                       name="product"
                       type="radio"
                       style={{ border: '1px solid #D1D5DB' }}

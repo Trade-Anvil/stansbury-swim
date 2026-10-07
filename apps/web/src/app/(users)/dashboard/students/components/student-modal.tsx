@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useState } from 'react'
 import { Student } from '@lib/student'
 
@@ -10,17 +10,13 @@ interface StudentModalProps {
 }
 
 export default function StudentModal({ student, onClose, onSave, onDelete }: StudentModalProps) {
-  const [formState, setFormState] = useState<Student>(
-    student || { id: '', name: '', ability: '', notes: '', birthday: '' },
+  // The parent keys this modal by student, so a different student remounts it with fresh state.
+  const [formState, setFormState] = useState<Student>(() =>
+    student
+      ? // The date input needs the birthday as YYYY-MM-DD
+        { ...student, birthday: student.birthday ? student.birthday.split('T')[0] : student.birthday }
+      : { id: '', name: '', ability: '', notes: '', birthday: '' },
   )
-
-  // Ensure the birthday is in YYYY-MM-DD format for input
-  useEffect(() => {
-    if (student?.birthday) {
-      const formattedBirthday = student.birthday.split('T')[0] // Extract YYYY-MM-DD
-      setFormState(prev => ({ ...prev, birthday: formattedBirthday }))
-    }
-  }, [student])
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target

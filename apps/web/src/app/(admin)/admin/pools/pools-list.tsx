@@ -84,6 +84,7 @@ export default function PoolsList({ pools }: PoolsListProps) {
 
       {editingPool && (
         <PoolEditModal
+          key={editingPool.id}
           isOpen={!!editingPool}
           onClose={handleCloseEditModal}
           onSuccess={handleSuccess}

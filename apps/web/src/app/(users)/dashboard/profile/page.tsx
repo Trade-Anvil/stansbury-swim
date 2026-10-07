@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { MeService } from '@/services/api/shared/meService'
 import { useUser } from '@contexts/user-context'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
@@ -24,8 +24,11 @@ export default function Profile() {
 
   const isFormValid = firstName && lastName && email && address1 && city && state && zip && phone
 
-  // Synchronize form state with user context
-  useEffect(() => {
+  // Refill the form whenever the user from context changes (first load, and after a save refreshes it).
+  // Done during render rather than in an effect, per https://react.dev/learn/you-might-not-need-an-effect
+  const [syncedUser, setSyncedUser] = useState(user)
+  if (user !== syncedUser) {
+    setSyncedUser(user)
     if (user) {
       setFirstName(user.firstName || '')
       setLastName(user.lastName || '')
@@ -37,7 +40,7 @@ export default function Profile() {
       setPostalCode(user.zip || '')
       setPhone(user.phone || '')
     }
-  }, [user])
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

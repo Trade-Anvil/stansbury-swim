@@ -1,5 +1,5 @@
 'use client'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useSyncExternalStore } from 'react'
 import { CalendarIcon, EllipsisHorizontalIcon, MapPinIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { StudentService } from '@/services/api/shared/studentService'
@@ -13,6 +13,13 @@ import { ORG_TIMEZONE } from '@/app/utils/dates'
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
 }
+
+// The device timezone never changes while the page is open, so there is nothing to subscribe to.
+const subscribeToTimeZone = () => () => {
+  // nothing to unsubscribe from
+}
+const getViewerTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
+const getServerTimeZone = () => null
 
 const isWithin24Hours = (date: string) => {
   const lessonTime = new Date(date)
@@ -28,71 +35,56 @@ export default function UpcomingLessons({
   instructors: InstructorResponseDto[]
   pools: PoolDto[]
 }) {
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [students, setStudents] = useState([] as StudentResponseDto[])
   const [schedules, setSchedules] = useState([] as ScheduleResponseDto[])
   const { refreshCredits } = useCredits()
-  const [timeOptions, setTimeOptions] = useState<Intl.DateTimeFormatOptions>({
+
+  // The viewer's timezone is only knowable after hydration, so this stays null
+  // for the server render and the first client render.
+  const viewerTimeZone = useSyncExternalStore<string | null>(
+    subscribeToTimeZone,
+    getViewerTimeZone,
+    getServerTimeZone,
+  )
+  const timeOptions: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
     timeZone: ORG_TIMEZONE,
-  })
+    // Viewers whose device is set outside the pool's timezone get an explicit
+    // label so they don't read the time as local. 'shortGeneric' renders 'MT'
+    // rather than 'MDT'/'MST', matching the Time component.
+    ...(viewerTimeZone !== null && viewerTimeZone !== ORG_TIMEZONE ? { timeZoneName: 'shortGeneric' } : {}),
+  }
 
   // Track loading for both students and schedules
   const [studentsLoading, setStudentsLoading] = useState(true)
   const [schedulesLoading, setSchedulesLoading] = useState(true)
+  const loading = studentsLoading || schedulesLoading
 
-  const fetchStudents = async () => {
-    setStudentsLoading(true)
-    try {
-      const students = await StudentService.findMyStudents()
-      setStudents(students)
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setStudentsLoading(false)
-    }
-  }
+  // Both start out loading, so these only clear the flag when the request settles.
+  const loadStudents = () =>
+    StudentService.findMyStudents()
+      .then(setStudents)
+      .catch((err: any) => setError(err.message))
+      .finally(() => setStudentsLoading(false))
 
-  const fetchSchedules = async () => {
+  const loadSchedules = () =>
+    ScheduleService.findMySchedule()
+      .then(setSchedules)
+      .catch((err: any) => setError(err.message))
+      .finally(() => setSchedulesLoading(false))
+
+  // For refreshes after the first load, which show the loading state again.
+  const fetchSchedules = () => {
     setSchedulesLoading(true)
-    try {
-      const schedules = await ScheduleService.findMySchedule()
-      setSchedules(schedules)
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setSchedulesLoading(false)
-    }
+    return loadSchedules()
   }
 
   useEffect(() => {
-    const viewerTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-    const newOptions: Intl.DateTimeFormatOptions = {
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: ORG_TIMEZONE,
-    }
-
-    // Viewers whose device is set outside the pool's timezone get an explicit
-    // label so they don't read the time as local. 'shortGeneric' renders 'MT'
-    // rather than 'MDT'/'MST', matching the Time component.
-    if (viewerTimeZone !== ORG_TIMEZONE) {
-      newOptions.timeZoneName = 'shortGeneric'
-    }
-    setTimeOptions(newOptions)
+    loadSchedules()
+    loadStudents()
   }, [])
-
-  useEffect(() => {
-    fetchSchedules()
-    fetchStudents()
-  }, [])
-
-  useEffect(() => {
-    setLoading(studentsLoading || schedulesLoading)
-  }, [studentsLoading, schedulesLoading])
 
   const handleCancel = async (e: React.MouseEvent, schedule: ScheduleResponseDto, student: Student) => {
     e.preventDefault()

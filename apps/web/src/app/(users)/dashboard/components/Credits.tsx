@@ -1,16 +1,10 @@
 'use client'
-import { useEffect, useState } from 'react'
 import { useCredits } from '@contexts/index'
 
 export default function Credits({ stats }: { stats: { name: string; stat: number }[] }) {
   const { credits } = useCredits()
-  const [currentStats, setCurrentStats] = useState(stats)
-
-  useEffect(() => {
-    setCurrentStats(prev =>
-      prev.map(item => (item.name === 'Available lesson credits' ? { ...item, stat: credits } : item)),
-    )
-  }, [credits])
+  // The live balance from the credits context replaces the server-rendered one.
+  const currentStats = stats.map(item => (item.name === 'Available lesson credits' ? { ...item, stat: credits } : item))
 
   return (
     <div className="py-5">

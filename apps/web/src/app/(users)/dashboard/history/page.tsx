@@ -25,57 +25,31 @@ export default function History() {
   const [pools, setPools] = useState([] as PoolDto[])
   const [instructors, setInstructors] = useState([] as InstructorResponseDto[])
 
-  const fetchPools = async () => {
-    const pools = await PoolService.findAll()
-    setPools(pools)
-  }
-
-  const fetchInstructors = async () => {
-    const instructors = await InstructorService.findAll()
-    setInstructors(instructors)
-  }
-
-  const fetchTransactions = async () => {
-    try {
-      const transactions = await TransactionsService.findMy()
-      // sort by created at descending
-      transactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      setTransactions(transactions)
-
-      const scheduleIds = transactions.filter(t => t.scheduleId).map(t => t.scheduleId)
-      const uniqueScheduleIds = Array.from(new Set(scheduleIds))
-      const queryString = uniqueScheduleIds.map(id => id).join(',')
-      const schedules = queryString ? await ScheduleService.findAll() : []
-      setSchedules(schedules.filter(s => uniqueScheduleIds.includes(s.id)))
-    } catch (err: any) {
-      console.error(err)
-    }
-  }
-
-  const fetchProducts = async () => {
-    try {
-      const products = await ProductService.findAll()
-      setProducts(products)
-    } catch (err: any) {
-      console.error(err)
-    }
-  }
-
-  const fetchStudents = async () => {
-    try {
-      const students = await StudentService.findMyStudents()
-      setStudents(students)
-    } catch (err: any) {
-      console.error(err)
-    }
-  }
-
   useEffect(() => {
-    fetchTransactions()
-    fetchProducts()
-    fetchStudents()
-    fetchPools()
-    fetchInstructors()
+    TransactionsService.findMy()
+      .then(async transactions => {
+        // sort by created at descending
+        transactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        setTransactions(transactions)
+
+        const scheduleIds = transactions.filter(t => t.scheduleId).map(t => t.scheduleId)
+        const uniqueScheduleIds = Array.from(new Set(scheduleIds))
+        const queryString = uniqueScheduleIds.map(id => id).join(',')
+        const schedules = queryString ? await ScheduleService.findAll() : []
+        setSchedules(schedules.filter(s => uniqueScheduleIds.includes(s.id)))
+      })
+      .catch((err: any) => console.error(err))
+
+    ProductService.findAll()
+      .then(setProducts)
+      .catch((err: any) => console.error(err))
+
+    StudentService.findMyStudents()
+      .then(setStudents)
+      .catch((err: any) => console.error(err))
+
+    PoolService.findAll().then(setPools)
+    InstructorService.findAll().then(setInstructors)
   }, [])
 
   return (

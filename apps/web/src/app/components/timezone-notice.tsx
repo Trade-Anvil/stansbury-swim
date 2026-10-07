@@ -1,6 +1,13 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useSyncExternalStore } from 'react'
 import { ORG_TIMEZONE } from '@/app/utils/dates'
+
+// The device timezone never changes while the page is open, so there is nothing to subscribe to.
+const subscribe = () => () => {
+  // nothing to unsubscribe from
+}
+const getViewerTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
+const getServerTimeZone = () => null
 
 // Names the viewer's timezone the way a person would say it, for example
 // 'Eastern Time' rather than 'America/New_York'.
@@ -17,11 +24,7 @@ function describeTimeZone(timeZone: string) {
 export default function TimezoneNotice() {
   // The viewer's timezone is only knowable after hydration, so this stays null
   // for the server render and the first client render.
-  const [viewerTimeZone, setViewerTimeZone] = useState<string | null>(null)
-
-  useEffect(() => {
-    setViewerTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
-  }, [])
+  const viewerTimeZone = useSyncExternalStore<string | null>(subscribe, getViewerTimeZone, getServerTimeZone)
 
   if (!viewerTimeZone || viewerTimeZone === ORG_TIMEZONE) {
     return null

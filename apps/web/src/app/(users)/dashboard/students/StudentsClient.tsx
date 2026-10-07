@@ -182,6 +182,7 @@ export default function StudentsClient({ students: initialStudents, error: initi
       </div>
       {isModalOpen && (
         <StudentModal
+          key={editingStudent?.id ?? 'new'}
           student={editingStudent}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}

@@ -38,8 +38,8 @@ export default function UsersList({
       const response = await AuthenticationService.authenticationControllerImpersonate({ userId })
       if (response.accessToken) {
         localStorage.setItem('user', JSON.stringify(response))
-        // Redirect to user's dashboard
-        window.location.href = '/dashboard'
+        // Redirect to user's dashboard with a full page load, so the app picks up the impersonated user
+        window.location.assign('/dashboard')
       }
     } catch (error) {
       console.error('Failed to impersonate user:', error)

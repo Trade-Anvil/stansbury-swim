@@ -9,27 +9,24 @@ type Status = 'working' | 'done' | 'failed'
 export function VerifyEmailClient() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
-  const [status, setStatus] = useState<Status>('working')
+  const [requestStatus, setRequestStatus] = useState<Status>('working')
   const [email, setEmail] = useState<string | null>(null)
   // React runs effects twice in development. The token burns on first use, so without this
   // the second run reports a failure on a link that actually worked.
   const attempted = useRef(false)
+  // A link with no token can only fail, so there is nothing to wait for.
+  const status: Status = token ? requestStatus : 'failed'
 
   useEffect(() => {
-    if (attempted.current) return
+    if (!token || attempted.current) return
     attempted.current = true
-
-    if (!token) {
-      setStatus('failed')
-      return
-    }
 
     AuthService.verifyEmail(token)
       .then(response => {
         setEmail(response?.email ?? null)
-        setStatus('done')
+        setRequestStatus('done')
       })
-      .catch(() => setStatus('failed'))
+      .catch(() => setRequestStatus('failed'))
   }, [token])
 
   return (

@@ -40,17 +40,8 @@ export default function ProductEditModal({ isOpen, onClose, onSuccess, product }
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const isGroup = product.lessonType === ProductResponseDto.lessonType.GROUP
-
-  useEffect(() => {
-    setFormData({
-      name: product.name,
-      description: product.description,
-      amount: product.amount,
-      credits: product.credits,
-      features: product.features,
-      scheduleId: product.scheduleId ?? '',
-    })
-  }, [product])
+  // Form state starts from the product prop. The parent keys this modal by product id, so
+  // editing a different product remounts it with fresh state.
 
   // Load every group session so a product's session link can be reviewed/changed.
   // A linked session is what lets shoppers actually select and pay for the class.

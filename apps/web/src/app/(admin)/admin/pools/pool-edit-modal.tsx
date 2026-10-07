@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
@@ -28,17 +28,9 @@ export default function PoolEditModal({ isOpen, onClose, onSuccess, pool }: Pool
   const [error, setError] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  // State starts from the pool prop. The parent keys this modal by pool id, so editing a
+  // different pool remounts it with fresh state.
   const [previewUrl, setPreviewUrl] = useState<string | null>(pool.imageUrl)
-
-  useEffect(() => {
-    setFormData({
-      name: pool.name,
-      address: pool.address,
-      details: pool.details,
-      imageUrl: pool.imageUrl,
-    })
-    setPreviewUrl(pool.imageUrl)
-  }, [pool])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

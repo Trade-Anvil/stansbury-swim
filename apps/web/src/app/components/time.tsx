@@ -1,6 +1,13 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useSyncExternalStore } from 'react'
 import { formatDateTime, ORG_TIMEZONE } from '@/app/utils/dates'
+
+// The device timezone never changes while the page is open, so there is nothing to subscribe to.
+const subscribe = () => () => {
+  // nothing to unsubscribe from
+}
+const getViewerTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
+const getServerTimeZone = () => null
 
 /**
  * Renders a lesson time in the pool's timezone.
@@ -19,11 +26,7 @@ export default function Time({
 }) {
   // The viewer's timezone is only knowable after hydration, so this stays null
   // for the server render and the first client render.
-  const [viewerTimeZone, setViewerTimeZone] = useState<string | null>(null)
-
-  useEffect(() => {
-    setViewerTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
-  }, [])
+  const viewerTimeZone = useSyncExternalStore<string | null>(subscribe, getViewerTimeZone, getServerTimeZone)
 
   // Viewers outside the pool's timezone always get the label so they don't read
   // the time as local.

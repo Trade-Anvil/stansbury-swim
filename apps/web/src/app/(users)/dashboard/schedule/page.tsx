@@ -72,27 +72,12 @@ export default function Schedule() {
   const [pools, setPools] = useState([] as PoolDto[])
   const [instructors, setInstructors] = useState([] as InstructorResponseDto[])
 
-  const fetchPools = async () => {
-    const pools = await PoolService.findAll()
-    setPools(pools)
-  }
-
-  const fetchInstructors = async () => {
-    const instructors = await InstructorService.findAll()
-    setInstructors(instructors)
-  }
-
   useEffect(() => {
     const fetchAvailableDates = async () => {
       const dates = await ScheduleService.findAvailableDates(TIMEZONE)
       setAvailableDates(dates)
     }
     fetchAvailableDates()
-  }, [])
-
-  useEffect(() => {
-    fetchPools()
-    fetchInstructors()
   }, [])
 
   const { user, refreshUser } = useUser()
@@ -117,13 +102,31 @@ export default function Schedule() {
   const [selectedDays, setSelectedDays] = useState(days)
   const [selectedTimes, setSelectedTimes] = useState(times)
 
+  // Every pool and instructor starts out selected in the filter once the lists arrive.
   useEffect(() => {
-    if (!user?.signedWaiver) {
-      setError('You must sign the waiver before scheduling lessons')
-    } else {
-      setError('')
-    }
-  }, [user])
+    PoolService.findAll().then(pools => {
+      setPools(pools)
+      if (pools.length > 0) {
+        setSelectedPools(pools.map(pool => ({ value: pool.id, label: pool.name, checked: true })))
+      }
+    })
+    InstructorService.findAll().then(instructors => {
+      setInstructors(instructors)
+      if (instructors.length > 0) {
+        setSelectedInstructors(
+          instructors.map(instructor => ({ value: instructor.id, label: instructor.name, checked: true })),
+        )
+      }
+    })
+  }, [])
+
+  // Reset the error whenever the user changes: the waiver message until it is signed, otherwise nothing.
+  // Done during render rather than in an effect, per https://react.dev/learn/you-might-not-need-an-effect
+  const [waiverCheckedFor, setWaiverCheckedFor] = useState<typeof user | 'unchecked'>('unchecked')
+  if (waiverCheckedFor !== user) {
+    setWaiverCheckedFor(user)
+    setError(user?.signedWaiver ? '' : 'You must sign the waiver before scheduling lessons')
+  }
 
   const handlePoolsChange = (pools: Option[]) => {
     setSelectedPools(pools)
@@ -192,60 +195,30 @@ export default function Schedule() {
     }
   }
 
-  const fetchStudents = async () => {
-    try {
-      const students = await StudentService.findMyStudents()
-      // Removed students stay readable elsewhere so past bookings still render a name,
-      // but they must never be selectable for a new booking.
-      setStudents(students.filter(student => !student.deletedAt))
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const searchSchedules = async () => {
-    let schedules: SearchScheduleResponseDto[] = []
-    try {
-      schedules = await ScheduleService.search({
-        pools: selectedPools.filter(o => o.checked).map(o => o.value),
-        instructors: selectedInstructors.filter(o => o.checked).map(o => o.value),
-        daysOfWeek: selectedDays.filter(o => o.checked).map(o => o.value),
-        date: selectedDate,
-        timezone: TIMEZONE,
-      })
-    } catch {
-      schedules = (await ScheduleService.findAll()) as unknown as SearchScheduleResponseDto[]
-    }
-    setSchedules(schedules.filter(s => s.lessonType == 'private'))
-  }
-
   useEffect(() => {
-    searchSchedules()
+    ScheduleService.search({
+      pools: selectedPools.filter(o => o.checked).map(o => o.value),
+      instructors: selectedInstructors.filter(o => o.checked).map(o => o.value),
+      daysOfWeek: selectedDays.filter(o => o.checked).map(o => o.value),
+      date: selectedDate,
+      timezone: TIMEZONE,
+    })
+      .catch(() => ScheduleService.findAll().then(all => all as unknown as SearchScheduleResponseDto[]))
+      .then(schedules => setSchedules(schedules.filter(s => s.lessonType == 'private')))
   }, [selectedPools, selectedInstructors, selectedDays, selectedDate, pendingSchedules])
 
   useEffect(() => {
-    fetchStudents()
+    StudentService.findMyStudents()
+      // Removed students stay readable elsewhere so past bookings still render a name,
+      // but they must never be selectable for a new booking.
+      .then(students => setStudents(students.filter(student => !student.deletedAt)))
+      .catch((err: any) => setError(err.message))
+      .finally(() => setLoading(false))
   }, [])
 
   useEffect(() => {
     refreshCredits()
   }, [pendingSchedules])
-
-  useEffect(() => {
-    if (pools.length > 0) {
-      setSelectedPools(pools.map(pool => ({ value: pool.id, label: pool.name, checked: true })))
-    }
-  }, [pools])
-
-  useEffect(() => {
-    if (instructors.length > 0) {
-      setSelectedInstructors(
-        instructors.map(instructor => ({ value: instructor.id, label: instructor.name, checked: true })),
-      )
-    }
-  }, [instructors])
 
   const handleWaiverClose = () => {
     setError('')

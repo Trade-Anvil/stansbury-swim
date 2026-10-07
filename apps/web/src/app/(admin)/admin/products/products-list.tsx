@@ -100,6 +100,7 @@ export default function ProductsList() {
 
       {editingProduct && (
         <ProductEditModal
+          key={editingProduct.id}
           isOpen={!!editingProduct}
           onClose={handleCloseEditModal}
           onSuccess={handleSuccess}

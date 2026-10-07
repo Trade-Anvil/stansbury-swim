@@ -21,20 +21,34 @@ export default function ClientWrapper() {
   const { user } = useUser()
   const [showMySchedule, setShowMySchedule] = useState(true)
 
-  const fetchSchedules = async () => {
-    try {
-      const data = await ScheduleService.findAll()
-      setSchedules(data)
-    } catch (error) {
-      console.error('Failed to fetch schedules:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const fetchSchedules = () =>
+    ScheduleService.findAll()
+      .then(setSchedules)
+      .catch(error => console.error('Failed to fetch schedules:', error))
+      .finally(() => setIsLoading(false))
 
   useEffect(() => {
     fetchSchedules()
   }, [])
+
+  // Changing a filter, or the signed-in user, goes back to the first page.
+  const changePool = (pool: string) => {
+    setSelectedPool(pool)
+    setCurrentPage(1)
+  }
+  const changeDate = (date: string) => {
+    setSelectedDate(date)
+    setCurrentPage(1)
+  }
+  const changeShowMySchedule = (show: boolean) => {
+    setShowMySchedule(show)
+    setCurrentPage(1)
+  }
+  const [pagedForUser, setPagedForUser] = useState(user)
+  if (pagedForUser !== user) {
+    setPagedForUser(user)
+    setCurrentPage(1)
+  }
 
   // Filter schedules based on selected filters
   const filteredSchedules = useMemo(() => {
@@ -71,11 +85,6 @@ export default function ClientWrapper() {
 
   const paginatedSchedules = filteredSchedules.slice(startIndex, endIndex)
 
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [selectedPool, selectedDate, user, showMySchedule])
-
   if (isLoading) {
     return <div>Loading...</div>
   }
@@ -85,12 +94,12 @@ export default function ClientWrapper() {
       <div className="mt-6">
         <TimezoneNotice />
         <Filter
-          onPoolChange={setSelectedPool}
-          onDateChange={setSelectedDate}
+          onPoolChange={changePool}
+          onDateChange={changeDate}
           selectedPool={selectedPool}
           selectedDate={selectedDate}
           showMySchedule={showMySchedule}
-          onShowMyScheduleChange={setShowMySchedule}
+          onShowMyScheduleChange={changeShowMySchedule}
         />
       </div>
 

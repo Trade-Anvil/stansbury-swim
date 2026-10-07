@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { format } from 'date-fns'
 import { MeService } from '@/services/api/shared/meService'
@@ -14,13 +14,7 @@ export function WaiverModal({ isOpen, onClose }: WaiverModalProps) {
   const [error, setError] = useState<string | null>(null)
   const currentDate = new Date()
   const { user } = useUser()
-  const [placeholder, setPlaceholder] = useState('')
-
-  useEffect(() => {
-    if (user) {
-      setPlaceholder(user.firstName + ' ' + user.lastName)
-    }
-  }, [user])
+  const placeholder = user ? user.firstName + ' ' + user.lastName : ''
 
   const handleSubmit = async () => {
     setError(null)

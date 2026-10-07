@@ -3,7 +3,7 @@
 import { UserResponseDto } from '@/api'
 import { useUser } from '@/app/contexts/user-context'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 interface AdminProtectedPageProps {
   children: React.ReactNode
@@ -12,13 +12,13 @@ interface AdminProtectedPageProps {
 export default function AdminProtectedPage({ children }: AdminProtectedPageProps) {
   const { user } = useUser()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
+  // The user loads asynchronously; until it arrives there is nothing to check.
+  const loading = !user
 
   useEffect(() => {
     if (!user) {
       return
     }
-    setLoading(false)
 
     if (user.role !== UserResponseDto.role.ADMIN && user.role !== UserResponseDto.role.INSTRUCTOR) {
       router.push('/')

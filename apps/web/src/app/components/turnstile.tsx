@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useEffectEvent, useRef } from 'react'
 
 // https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/
 const SCRIPT_URL = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
@@ -50,8 +50,8 @@ const loadTurnstile = (): Promise<TurnstileApi> => {
 export const Turnstile = ({ onToken, resetKey }: { onToken: (token: string | null) => void; resetKey: number }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetIdRef = useRef<string | null>(null)
-  const onTokenRef = useRef(onToken)
-  onTokenRef.current = onToken
+  // Always calls the latest onToken without re-rendering the widget when the parent passes a new function.
+  const reportToken = useEffectEvent((token: string | null) => onToken(token))
 
   useEffect(() => {
     if (!SITE_KEY) {
@@ -66,12 +66,12 @@ export const Turnstile = ({ onToken, resetKey }: { onToken: (token: string | nul
         }
         widgetIdRef.current = turnstile.render(containerRef.current, {
           sitekey: SITE_KEY,
-          callback: (token: string) => onTokenRef.current(token),
-          'expired-callback': () => onTokenRef.current(null),
-          'error-callback': () => onTokenRef.current(null),
+          callback: (token: string) => reportToken(token),
+          'expired-callback': () => reportToken(null),
+          'error-callback': () => reportToken(null),
         })
       })
-      .catch(() => onTokenRef.current(null))
+      .catch(() => reportToken(null))
 
     return () => {
       cancelled = true
@@ -84,7 +84,7 @@ export const Turnstile = ({ onToken, resetKey }: { onToken: (token: string | nul
 
   useEffect(() => {
     if (resetKey > 0 && widgetIdRef.current && window.turnstile) {
-      onTokenRef.current(null)
+      reportToken(null)
       window.turnstile.reset(widgetIdRef.current)
     }
   }, [resetKey])

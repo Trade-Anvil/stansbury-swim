@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Cache node_modules
+      - uses: actions/setup-node@v7
+        with:
+          # Match the Dockerfile the API ships with.
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - uses: nrwl/nx-set-shas@v5
+
+      - run: git branch --track main origin/main
+        if: ${{ github.event_name == 'pull_request' }}
+
+      - run: npx nx format:check
+      # web is left out: its build prerenders pages against the live API, and Vercel builds it on every deploy anyway.
+      - run: npx nx affected -t lint test build e2e-ci --exclude=web

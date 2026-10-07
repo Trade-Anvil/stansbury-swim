@@ -2,6 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
+    // Next.js's own default. The base "node" mode can't resolve package subpath exports such as
+    // @sentry/nextjs/config, which next.config.js needs for Sentry 11.
+    "moduleResolution": "bundler",
     "types": ["react", "react-dom"],
     "allowJs": true,
     "esModuleInterop": true,
@@ -25,7 +28,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "**/*.ts",

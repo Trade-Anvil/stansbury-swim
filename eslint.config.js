@@ -1,10 +1,6 @@
 const nx = require('@nx/eslint-plugin')
-const { FlatCompat } = require('@eslint/eslintrc')
+const nextVitals = require('eslint-config-next/core-web-vitals')
 const globals = require('globals')
-
-// eslint-config-next 15 only ships the legacy format, so it goes through FlatCompat
-// (https://nextjs.org/docs/15/app/api-reference/config/eslint).
-const compat = new FlatCompat({ baseDirectory: __dirname })
 
 module.exports = [
   {
@@ -58,12 +54,17 @@ module.exports = [
     ...config,
     files: ['apps/web/**/*.ts', 'apps/web/**/*.tsx'],
   })),
-  ...compat
-    .config({
-      extends: ['next', 'next/core-web-vitals'],
-      settings: { next: { rootDir: 'apps/web/' } },
-    })
-    .map(config => ({ ...config, files: ['apps/web/**/*.{js,jsx,ts,tsx}'] })),
+  // eslint-config-next 16 ships flat config (https://nextjs.org/docs/app/api-reference/config/eslint).
+  // Its ignores-only entry stays global; everything else is scoped to the web app.
+  ...nextVitals.map(config =>
+    config.ignores
+      ? config
+      : {
+          ...config,
+          files: ['apps/web/**/*.{js,jsx,ts,tsx}'],
+          settings: { ...config.settings, next: { rootDir: 'apps/web/' } },
+        },
+  ),
   {
     files: ['apps/web/**/*.{js,jsx,ts,tsx}'],
     rules: {

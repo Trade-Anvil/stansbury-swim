@@ -71,3 +71,8 @@ backup.gzip
 
 # TypeScript incremental build cache
 *.tsbuildinfo
+
+.claude/worktrees
+.nx/polygraph
+.nx/self-healing
+.nx/migrate-runs

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const authToken = request.cookies.get('authToken')?.value
 
@@ -25,7 +25,7 @@ export function middleware(request: NextRequest) {
   })
 }
 
-// Configure which routes the middleware should run on
+// Configure which routes the proxy should run on
 export const config = {
   matcher: ['/api/:path*', '/dashboard/:path*', '/(users)/dashboard/:path*'],
 }

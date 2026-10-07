@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'web',
   preset: '../../jest.preset.js',
   transform: {
@@ -10,4 +10,4 @@ export default {
   coverageDirectory: '../../coverage/apps/web',
   // No specs here yet. Without this, jest exits 1 and fails `nx affected -t test` in CI.
   passWithNoTests: true,
-};
+}

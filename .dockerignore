@@ -5,7 +5,6 @@ tmp
 .github
 .next
 .nx
-.gcloudignore
 .gitignore
 .git
 apps/ios/

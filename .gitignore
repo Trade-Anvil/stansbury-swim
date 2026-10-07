@@ -49,13 +49,10 @@ out
 # nx
 .nx/workspace-data
 
-.env
+.env*
+!.env-example
+!.env.example
 certificates
-
-.env.production
-.env.staging
-.env.development
-.env.local
 
 google-credentials.json
 # Sentry Config File

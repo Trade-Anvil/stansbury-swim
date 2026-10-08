@@ -8,6 +8,8 @@ import { ConfigService } from '@/services/api/shared/configService'
 import { WaitlistService } from '@/services/api/shared/waitlistService'
 import { PoolService } from '@/services/api/shared/poolService'
 
+export const metadata = { title: 'Purchase lessons' }
+
 export default async function PurchasePage() {
   // Fetch all required data on the server
   const [products, schedules, students, config, waitlist, pools] = await Promise.all([

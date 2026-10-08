@@ -30,28 +30,32 @@ export function VerifyEmailClient() {
   }, [token])
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <main id="main" className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm text-center">
-        {status === 'working' && <p className="text-sm text-gray-600">Confirming your email address...</p>}
+        {/* The result arrives after the page loads, so announce it when it changes. */}
+        <div aria-live="polite">
+          {status === 'working' && <p className="text-sm text-gray-600">Confirming your email address...</p>}
 
-        {status === 'done' && (
-          <>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">Email confirmed</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              {email ? `${email} is now the address on your account.` : 'Your address is confirmed.'} Lesson
-              confirmations and reminders will go here.
-            </p>
-          </>
-        )}
+          {status === 'done' && (
+            <>
+              <h1 className="text-2xl font-bold tracking-tight text-gray-900">Email confirmed</h1>
+              <p className="mt-2 text-sm text-gray-600">
+                {email ? `${email} is now the address on your account.` : 'Your address is confirmed.'} Lesson
+                confirmations and reminders will go here.
+              </p>
+            </>
+          )}
 
-        {status === 'failed' && (
-          <>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">That link didn&apos;t work</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              It may have expired or already been used. Sign in and use the banner on your dashboard to send a new one.
-            </p>
-          </>
-        )}
+          {status === 'failed' && (
+            <>
+              <h1 className="text-2xl font-bold tracking-tight text-gray-900">That link didn&apos;t work</h1>
+              <p className="mt-2 text-sm text-gray-600">
+                It may have expired or already been used. Sign in and use the banner on your dashboard to send a new
+                one.
+              </p>
+            </>
+          )}
+        </div>
 
         <Link
           href="/dashboard"
@@ -60,6 +64,6 @@ export function VerifyEmailClient() {
           Go to dashboard
         </Link>
       </div>
-    </div>
+    </main>
   )
 }

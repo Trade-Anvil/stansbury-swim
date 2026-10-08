@@ -71,10 +71,10 @@ export function WaiverModal({ isOpen, onClose }: WaiverModalProps) {
 
             <div className="space-y-4 pb-6">
               {error && (
-                <div className="rounded-md bg-red-50 p-4">
+                <div role="alert" className="rounded-md bg-red-50 p-4">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -91,9 +91,13 @@ export function WaiverModal({ isOpen, onClose }: WaiverModalProps) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Signature</label>
+                  <label htmlFor="waiver-signature" className="block text-sm font-medium text-gray-700">
+                    Signature
+                  </label>
                   <input
+                    id="waiver-signature"
                     type="text"
+                    autoComplete="name"
                     value={signature}
                     onChange={e => {
                       setSignature(e.target.value)
@@ -105,8 +109,11 @@ export function WaiverModal({ isOpen, onClose }: WaiverModalProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Date</label>
+                  <label htmlFor="waiver-date" className="block text-sm font-medium text-gray-700">
+                    Date
+                  </label>
                   <input
+                    id="waiver-date"
                     type="text"
                     value={format(currentDate, 'PPP')}
                     disabled

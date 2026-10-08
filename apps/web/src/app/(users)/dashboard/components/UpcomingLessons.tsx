@@ -44,11 +44,7 @@ export default function UpcomingLessons({
 
   // The viewer's timezone is only knowable after hydration, so this stays null
   // for the server render and the first client render.
-  const viewerTimeZone = useSyncExternalStore<string | null>(
-    subscribeToTimeZone,
-    getViewerTimeZone,
-    getServerTimeZone,
-  )
+  const viewerTimeZone = useSyncExternalStore<string | null>(subscribeToTimeZone, getViewerTimeZone, getServerTimeZone)
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
@@ -115,17 +111,17 @@ export default function UpcomingLessons({
 
   return (
     <div className="py-5">
-      <h3 className="text-base font-semibold leading-6 text-gray-900">Upcoming lessons</h3>
+      <h2 className="text-base font-semibold leading-6 text-gray-900">Upcoming lessons</h2>
       {loading ? (
         <p className="text-center text-sm text-gray-500">Loading upcoming lessons...</p>
       ) : error ? (
-        <div className="mt-4 rounded-md bg-red-50 p-4">
+        <div role="alert" className="mt-4 rounded-md bg-red-50 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">{error}</h3>
+              <p className="text-sm font-medium text-red-800">{error}</p>
             </div>
             <div className="ml-auto pl-3">
               <div className="-mx-1.5 -my-1.5">
@@ -215,7 +211,9 @@ export default function UpcomingLessons({
                     >
                       <div>
                         <MenuButton className="-m-2 flex items-center rounded-full p-2 text-gray-500 hover:text-gray-600">
-                          <span className="sr-only">Open options</span>
+                          <span className="sr-only">
+                            Open options for {studentName} on {day}
+                          </span>
                           <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
                         </MenuButton>
                       </div>
@@ -279,7 +277,7 @@ export default function UpcomingLessons({
           </ol>
         </div>
       )}
-      <h3 className="text-base font-semibold leading-6 text-gray-900">Past lessons</h3>
+      <h2 className="text-base font-semibold leading-6 text-gray-900">Past lessons</h2>
       {loading ? (
         <p className="text-center text-sm text-gray-500">Loading past lessons...</p>
       ) : (

@@ -57,9 +57,15 @@ export default function LoginForm() {
             id="email"
             type="email"
             autoComplete="email"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'email-error' : undefined}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
-          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+          {errors.email && (
+            <p id="email-error" className="mt-1 text-sm text-red-600">
+              {errors.email.message}
+            </p>
+          )}
         </div>
       </div>
 
@@ -80,9 +86,15 @@ export default function LoginForm() {
             id="password"
             type="password"
             autoComplete="current-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? 'password-error' : undefined}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
-          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+          {errors.password && (
+            <p id="password-error" className="mt-1 text-sm text-red-600">
+              {errors.password.message}
+            </p>
+          )}
         </div>
       </div>
 
@@ -95,8 +107,8 @@ export default function LoginForm() {
           {isLoading ? 'Signing in...' : 'Sign in'}
         </button>
         {error && (
-          <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-            <ExclamationCircleIcon className="h-5 w-5" />
+          <div role="alert" className="mt-2 flex items-center gap-2 text-sm text-red-600">
+            <ExclamationCircleIcon className="h-5 w-5" aria-hidden="true" />
             <p>{error}</p>
           </div>
         )}

@@ -84,7 +84,7 @@ export default function Profile() {
     <>
       <Header title="My Profile" />
       <div className="py-10">
-        <main className="px-6">
+        <div className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <div className="px-4 sm:px-6 lg:px-8">
               <form
@@ -150,7 +150,10 @@ export default function Profile() {
 
                       <div className="col-span-full">
                         <label htmlFor="street-address" className="block text-sm/6 font-medium text-gray-900">
-                          Street address <span className="text-red-500">*</span>
+                          Street address{' '}
+                          <span className="text-red-600" aria-hidden="true">
+                            *
+                          </span>
                         </label>
                         <div className="mt-2">
                           <input
@@ -167,7 +170,7 @@ export default function Profile() {
                       </div>
 
                       <div className="col-span-full">
-                        <label htmlFor="street-address" className="block text-sm/6 font-medium text-gray-900">
+                        <label htmlFor="street-address-2" className="block text-sm/6 font-medium text-gray-900">
                           Street address 2
                         </label>
                         <div className="mt-2">
@@ -185,7 +188,10 @@ export default function Profile() {
 
                       <div className="sm:col-span-2 sm:col-start-1">
                         <label htmlFor="city" className="block text-sm/6 font-medium text-gray-900">
-                          City <span className="text-red-500">*</span>
+                          City{' '}
+                          <span className="text-red-600" aria-hidden="true">
+                            *
+                          </span>
                         </label>
                         <div className="mt-2">
                           <input
@@ -203,7 +209,10 @@ export default function Profile() {
 
                       <div className="sm:col-span-2">
                         <label htmlFor="state" className="block text-sm/6 font-medium text-gray-900">
-                          State / Province <span className="text-red-500">*</span>
+                          State / Province{' '}
+                          <span className="text-red-600" aria-hidden="true">
+                            *
+                          </span>
                         </label>
                         <div className="mt-2">
                           <input
@@ -221,7 +230,10 @@ export default function Profile() {
 
                       <div className="sm:col-span-2">
                         <label htmlFor="postal-code" className="block text-sm/6 font-medium text-gray-900">
-                          ZIP / Postal code <span className="text-red-500">*</span>
+                          ZIP / Postal code{' '}
+                          <span className="text-red-600" aria-hidden="true">
+                            *
+                          </span>
                         </label>
                         <div className="mt-2">
                           <input
@@ -239,14 +251,17 @@ export default function Profile() {
 
                       <div className="sm:col-span-2">
                         <label htmlFor="phone" className="block text-sm/6 font-medium text-gray-900">
-                          Phone <span className="text-red-500">*</span>
+                          Phone{' '}
+                          <span className="text-red-600" aria-hidden="true">
+                            *
+                          </span>
                         </label>
                         <div className="mt-2">
                           <input
                             id="phone"
                             name="phone"
-                            type="phone"
-                            autoComplete="phone"
+                            type="tel"
+                            autoComplete="tel"
                             required
                             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             value={phone}
@@ -385,7 +400,7 @@ export default function Profile() {
                 </div>
               </form>
               {showSuccess && (
-                <div className="mt-10 rounded-md bg-green-50 p-4">
+                <div role="status" className="mt-10 rounded-md bg-green-50 p-4">
                   <div className="flex">
                     <div className="shrink-0">
                       <CheckCircleIcon aria-hidden="true" className="size-5 text-green-400" />
@@ -399,7 +414,7 @@ export default function Profile() {
               <DeleteAccountSection />
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

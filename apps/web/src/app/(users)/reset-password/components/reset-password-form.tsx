@@ -48,8 +48,8 @@ export default function ResetPasswordForm() {
   if (!token) {
     return (
       <div className="text-center">
-        <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-500" />
-        <h3 className="mt-2 text-sm font-semibold text-gray-900">Invalid Link</h3>
+        <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-500" aria-hidden="true" />
+        <h2 className="mt-2 text-sm font-semibold text-gray-900">Invalid Link</h2>
         <p className="mt-1 text-sm text-gray-500">This password reset link is invalid or has expired.</p>
         <div className="mt-6">
           <a href="/forgot-password" className="text-sm font-semibold text-indigo-600 hover:text-indigo-500">
@@ -106,13 +106,13 @@ export default function ResetPasswordForm() {
           Reset Password
         </button>
         {error && (
-          <div className="mt-2 flex items-center gap-1">
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-red-500">{error}</p>
+          <div role="alert" className="mt-2 flex items-center gap-1">
+            <ExclamationCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
         {success && (
-          <div className="mt-2 text-sm text-green-600">
+          <div role="status" className="mt-2 text-sm text-green-700">
             Password has been reset successfully. Redirecting to login...
           </div>
         )}

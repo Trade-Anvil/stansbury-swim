@@ -106,10 +106,7 @@ export default function PurchaseClient({
   // show a loading state instead of a misleading "complete contact info" banner
   // and prevents the form from being silently locked while /me is in flight.
   const isMissingContactInfo =
-    !userLoading &&
-    !userError &&
-    !!user &&
-    (!user.phone || !user.address1 || !user.city || !user.state || !user.zip)
+    !userLoading && !userError && !!user && (!user.phone || !user.address1 || !user.city || !user.state || !user.zip)
 
   const privateLessons = products.filter(p => p.lessonType == 'private')
   const groupLessons = products.filter(p => p.lessonType == 'group')
@@ -236,8 +233,7 @@ export default function PurchaseClient({
         extra: { orderId },
       })
       setError(
-        err?.message ||
-          'Your payment was authorized but we could not finalize it. Please contact us before retrying.'
+        err?.message || 'Your payment was authorized but we could not finalize it. Please contact us before retrying.',
       )
     }
   }
@@ -282,7 +278,7 @@ export default function PurchaseClient({
     <>
       <Header title="Purchase" />
       <div>
-        <main className="px-6">
+        <div className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
             {error && (
               <div
@@ -335,18 +331,9 @@ export default function PurchaseClient({
                 aria-live="polite"
                 className="mt-2 mb-4 flex items-center rounded-md border border-gray-200 bg-white p-4"
               >
-                <svg
-                  aria-hidden="true"
-                  className="size-5 animate-spin text-indigo-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
+                <svg aria-hidden="true" className="size-5 animate-spin text-indigo-600" fill="none" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-                  <path
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    className="opacity-75"
-                  />
+                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" className="opacity-75" />
                 </svg>
                 <p className="ml-3 text-sm text-gray-700">Loading your account…</p>
               </div>
@@ -406,89 +393,26 @@ export default function PurchaseClient({
                 {privateLessons.map(product => {
                   const { badge, rest } = splitDescription(product.description)
                   return (
-                  <label
-                    key={product.id}
-                    aria-label={product.name}
-                    aria-description={product.description}
-                    className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
-                  >
-                    <input
-                      value={product.name}
-                      checked={selectedProductId == product.id}
-                      onChange={() => selectProduct(product)}
-                      name="product"
-                      type="radio"
-                      style={{ border: '1px solid #D1D5DB' }}
-                      className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                      disabled={inputsDisabled}
-                    />
-                    <div className="flex flex-col flex-1">
-                      <span className="ml-3 flex flex-col">
-                        <span className="block text-sm font-medium text-gray-900">
-                          {product.name}
-                          {badge && (
-                            <Badge color="sky" className="ml-2">
-                              {badge}
-                            </Badge>
-                          )}
-                        </span>
-                        <span className="block text-sm text-gray-500 ">
-                          {rest} {currencyFormatter.format(product.amount / product.credits)} per lesson
-                        </span>
-                      </span>
-                    </div>
-                    {product.credits == 1 ? (
-                      <div onClick={e => e.stopPropagation()}>
-                        <span className="block text-sm/6 font-medium text-gray-900">Quantity</span>
-                        <div className="mt-2 grid grid-cols-1">
-                          <select
-                            id={`quantity-${product.id}`}
-                            name="quantity"
-                            aria-label="Quantity"
-                            className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                            onChange={e => setQuantity(parseInt(e.target.value))}
-                            disabled={inputsDisabled || selectedProductId != product.id}
-                            value={quantity}
-                          >
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
-                            <option>9</option>
-                          </select>
-                        </div>
-                      </div>
-                    ) : null}
-                  </label>
-                  )
-                })}
-                {groupLessons.map(product => {
-                  const { badge, rest } = splitDescription(product.description)
-                  const productSchedules = availableSchedulesFor(product)
-                  return (
-                  <label
-                    key={product.id}
-                    aria-label={product.name}
-                    aria-description={product.description}
-                    className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
-                  >
-                    <input
-                      value={product.name}
-                      checked={selectedProductId == product.id}
-                      onChange={() => selectProduct(product)}
-                      name="product"
-                      type="radio"
-                      style={{ border: '1px solid #D1D5DB' }}
-                      className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                      disabled={inputsDisabled}
-                    />
-                    <div className="flex flex-col sm:flex-row w-full gap-2">
-                      <div className="flex flex-col flex-1 w-full sm:w-auto ml-3">
-                        <span className="flex flex-col">
+                    // A div instead of a wrapping label, so the radio is named by the product text alone and the
+                    // quantity select has its own label. Clicking anywhere on the card still picks the product.
+                    <div
+                      key={product.id}
+                      onClick={() => !inputsDisabled && selectProduct(product)}
+                      className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
+                    >
+                      <input
+                        id={`product-${product.id}`}
+                        value={product.name}
+                        checked={selectedProductId == product.id}
+                        onChange={() => selectProduct(product)}
+                        name="product"
+                        type="radio"
+                        style={{ border: '1px solid #D1D5DB' }}
+                        className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
+                        disabled={inputsDisabled}
+                      />
+                      <div className="flex flex-col flex-1">
+                        <label htmlFor={`product-${product.id}`} className="ml-3 flex cursor-pointer flex-col">
                           <span className="block text-sm font-medium text-gray-900">
                             {product.name}
                             {badge && (
@@ -498,70 +422,149 @@ export default function PurchaseClient({
                             )}
                           </span>
                           <span className="block text-sm text-gray-500 ">
-                            {rest} {currencyFormatter.format(product.amount / product.credits)} per session
+                            {rest} {currencyFormatter.format(product.amount / product.credits)} per lesson
                           </span>
-                        </span>
+                        </label>
                       </div>
-                      <div
-                        className="flex flex-col gap-2 w-full sm:w-auto"
-                        onClick={e => e.stopPropagation()}
-                      >
-                        <span className="block text-sm/6 font-medium text-gray-900">Session</span>
-                        <div className="mt-2">
-                          {productSchedules.length === 0 ? (
-                            <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700">
-                              No sessions are currently available for this class. Please contact us.
-                            </p>
-                          ) : (
+                      {product.credits == 1 ? (
+                        <div onClick={e => e.stopPropagation()}>
+                          <label
+                            htmlFor={`quantity-${product.id}`}
+                            className="block text-sm/6 font-medium text-gray-900"
+                          >
+                            Quantity<span className="sr-only"> of {product.name}</span>
+                          </label>
+                          <div className="mt-2 grid grid-cols-1">
                             <select
-                              id={`session-${product.id}`}
-                              name="session"
-                              aria-label="Session"
+                              id={`quantity-${product.id}`}
+                              name="quantity"
+                              className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                              onChange={e => setQuantity(parseInt(e.target.value))}
+                              disabled={inputsDisabled || selectedProductId != product.id}
+                              value={quantity}
+                            >
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                              <option>6</option>
+                              <option>7</option>
+                              <option>8</option>
+                              <option>9</option>
+                            </select>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  )
+                })}
+                {groupLessons.map(product => {
+                  const { badge, rest } = splitDescription(product.description)
+                  const productSchedules = availableSchedulesFor(product)
+                  return (
+                    // Same structure as the private lesson cards above.
+                    <div
+                      key={product.id}
+                      onClick={() => !inputsDisabled && selectProduct(product)}
+                      className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
+                    >
+                      <input
+                        id={`product-${product.id}`}
+                        value={product.name}
+                        checked={selectedProductId == product.id}
+                        onChange={() => selectProduct(product)}
+                        name="product"
+                        type="radio"
+                        style={{ border: '1px solid #D1D5DB' }}
+                        className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
+                        disabled={inputsDisabled}
+                      />
+                      <div className="flex flex-col sm:flex-row w-full gap-2">
+                        <div className="flex flex-col flex-1 w-full sm:w-auto ml-3">
+                          <label htmlFor={`product-${product.id}`} className="flex cursor-pointer flex-col">
+                            <span className="block text-sm font-medium text-gray-900">
+                              {product.name}
+                              {badge && (
+                                <Badge color="sky" className="ml-2">
+                                  {badge}
+                                </Badge>
+                              )}
+                            </span>
+                            <span className="block text-sm text-gray-500 ">
+                              {rest} {currencyFormatter.format(product.amount / product.credits)} per session
+                            </span>
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2 w-full sm:w-auto" onClick={e => e.stopPropagation()}>
+                          {productSchedules.length === 0 ? (
+                            <span className="block text-sm/6 font-medium text-gray-900">Session</span>
+                          ) : (
+                            <label
+                              htmlFor={`session-${product.id}`}
+                              className="block text-sm/6 font-medium text-gray-900"
+                            >
+                              Session<span className="sr-only"> for {product.name}</span>
+                            </label>
+                          )}
+                          <div className="mt-2">
+                            {productSchedules.length === 0 ? (
+                              <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700">
+                                No sessions are currently available for this class. Please contact us.
+                              </p>
+                            ) : (
+                              <select
+                                id={`session-${product.id}`}
+                                name="session"
+                                className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                                onChange={e => setSelectedScheduleId(e.target.value)}
+                                value={selectedScheduleId}
+                                disabled={inputsDisabled}
+                              >
+                                <option value="">select a parent and tot session</option>
+                                {productSchedules.map(schedule => {
+                                  const pool = pools.find(pool => pool.id === schedule.poolId)?.name
+                                  const formatted = formatDateTime(schedule.startDateTime)
+                                  return (
+                                    <option key={schedule.id} value={schedule.id}>
+                                      {formatted} at {pool}
+                                    </option>
+                                  )
+                                })}
+                              </select>
+                            )}
+                          </div>
+                        </div>
+                        <div
+                          className="flex flex-col gap-2 w-full sm:w-auto sm:px-4"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <label
+                            htmlFor={`student-${product.id}`}
+                            className="block text-sm/6 font-medium text-gray-900"
+                          >
+                            Student<span className="sr-only"> for {product.name}</span>
+                          </label>
+                          <div className="mt-2">
+                            <select
+                              id={`student-${product.id}`}
+                              name="student"
                               className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                              onChange={e => setSelectedScheduleId(e.target.value)}
-                              value={selectedScheduleId}
+                              onChange={e => setSelectedStudentId(e.target.value)}
+                              value={selectedStudentId}
                               disabled={inputsDisabled}
                             >
-                              <option value="">select a parent and tot session</option>
-                              {productSchedules.map(schedule => {
-                                const pool = pools.find(pool => pool.id === schedule.poolId)?.name
-                                const formatted = formatDateTime(schedule.startDateTime)
-                                return (
-                                  <option key={schedule.id} value={schedule.id}>
-                                    {formatted} at {pool}
-                                  </option>
-                                )
-                              })}
+                              <option value="">select a student</option>
+                              {students.map(student => (
+                                <option key={student.id} value={student.id}>
+                                  {student.name}
+                                </option>
+                              ))}
                             </select>
-                          )}
-                        </div>
-                      </div>
-                      <div
-                        className="flex flex-col gap-2 w-full sm:w-auto sm:px-4"
-                        onClick={e => e.stopPropagation()}
-                      >
-                        <span className="block text-sm/6 font-medium text-gray-900">Student</span>
-                        <div className="mt-2">
-                          <select
-                            id={`student-${product.id}`}
-                            name="student"
-                            aria-label="Student"
-                            className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                            onChange={e => setSelectedStudentId(e.target.value)}
-                            value={selectedStudentId}
-                            disabled={inputsDisabled}
-                          >
-                            <option value="">select a student</option>
-                            {students.map(student => (
-                              <option key={student.id} value={student.id}>
-                                {student.name}
-                              </option>
-                            ))}
-                          </select>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </label>
                   )
                 })}
               </fieldset>
@@ -598,12 +601,12 @@ export default function PurchaseClient({
                                 {schedule ? (
                                   `${formattedSession} at ${pool?.name}`
                                 ) : (
-                                  <span className="text-red-500">Not selected</span>
+                                  <span className="text-red-600">Not selected</span>
                                 )}
                               </li>
                               <li>
                                 <span className="font-medium">Student:</span>{' '}
-                                {student ? student.name : <span className="text-red-500">Not selected</span>}
+                                {student ? student.name : <span className="text-red-600">Not selected</span>}
                               </li>
                             </>
                           )}
@@ -631,11 +634,7 @@ export default function PurchaseClient({
                         viewBox="0 0 24 24"
                       >
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-                        <path
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                          className="opacity-75"
-                        />
+                        <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" className="opacity-75" />
                       </svg>
                       <span className="ml-2 text-sm text-indigo-700">
                         Payment in progress — finish in the PayPal window.
@@ -692,7 +691,7 @@ export default function PurchaseClient({
                     onError={err => {
                       Sentry.captureException(err, { tags: { context: 'paypal.onError' } })
                       setError(
-                        'Something went wrong with PayPal. Please try again, or refresh the page if the issue persists.'
+                        'Something went wrong with PayPal. Please try again, or refresh the page if the issue persists.',
                       )
                       finishPayment()
                     }}
@@ -752,7 +751,7 @@ export default function PurchaseClient({
               ) : null}
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

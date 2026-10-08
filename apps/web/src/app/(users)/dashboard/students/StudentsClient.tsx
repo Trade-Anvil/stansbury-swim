@@ -75,12 +75,12 @@ export default function StudentsClient({ students: initialStudents, error: initi
     <div>
       <Header title="My Students" />
       <div className="py-10">
-        <main className="px-6">
+        <div className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <div>
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                  <h1 className="text-base font-semibold leading-6 text-gray-900">Students</h1>
+                  <h2 className="text-base font-semibold leading-6 text-gray-900">Students</h2>
                   <p className="mt-2 text-sm text-gray-700">A list of all the students in your account.</p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -99,7 +99,9 @@ export default function StudentsClient({ students: initialStudents, error: initi
                     {loading ? (
                       <p className="text-center text-sm text-gray-500">Loading students...</p>
                     ) : error ? (
-                      <p className="text-center text-sm text-red-500">Error: {error}</p>
+                      <p role="alert" className="text-center text-sm text-red-600">
+                        Error: {error}
+                      </p>
                     ) : students.length > 0 ? (
                       <ul role="list" className="divide-y divide-gray-100">
                         {[...students]
@@ -118,7 +120,6 @@ export default function StudentsClient({ students: initialStudents, error: initi
                                 className={`relative flex justify-between gap-x-6 py-5 ${
                                   isDeleted ? 'cursor-default' : 'hover:bg-gray-50'
                                 }`}
-                                onClick={() => !isDeleted && handleEdit(student)}
                               >
                                 <div className="flex min-w-0 gap-x-4">
                                   <div className="min-w-0 flex-auto">
@@ -127,25 +128,18 @@ export default function StudentsClient({ students: initialStudents, error: initi
                                         isDeleted ? 'text-gray-500' : 'text-gray-900'
                                       }`}
                                     >
-                                      <a href="#">
-                                        <span className="absolute inset-x-0 -top-px bottom-0" />
-                                        {studentName}
-                                      </a>
+                                      {isDeleted ? (
+                                        studentName
+                                      ) : (
+                                        <button type="button" className="text-left" onClick={() => handleEdit(student)}>
+                                          <span className="absolute inset-x-0 -top-px bottom-0" />
+                                          <span className="sr-only">Edit </span>
+                                          {studentName}
+                                        </button>
+                                      )}
                                     </p>
-                                    <p
-                                      className={`mt-1 flex text-xs leading-5 ${
-                                        isDeleted ? 'text-gray-400' : 'text-gray-500'
-                                      }`}
-                                    >
-                                      <a
-                                        href={`mailto:${student.notes}`}
-                                        className="relative truncate hover:underline"
-                                        onClick={e => {
-                                          if (isDeleted) e.preventDefault()
-                                        }}
-                                      >
-                                        {student.notes}
-                                      </a>
+                                    <p className="mt-1 flex text-xs leading-5 text-gray-500">
+                                      <span className="truncate">{student.notes}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -154,11 +148,7 @@ export default function StudentsClient({ students: initialStudents, error: initi
                                     <p className={`text-sm leading-6 ${isDeleted ? 'text-gray-500' : 'text-gray-900'}`}>
                                       Age {calculateAge(student.birthday)}
                                     </p>
-                                    <p
-                                      className={`mt-1 text-xs leading-5 ${
-                                        isDeleted ? 'text-gray-400' : 'text-gray-500'
-                                      }`}
-                                    >
+                                    <p className="mt-1 text-xs leading-5 text-gray-500">
                                       Ability: <span>{student.ability}</span>
                                     </p>
                                   </div>
@@ -178,7 +168,7 @@ export default function StudentsClient({ students: initialStudents, error: initi
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
       {isModalOpen && (
         <StudentModal

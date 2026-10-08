@@ -31,7 +31,7 @@ export default async function Header() {
               {announcement.title}
               <a href="#announcement" className="font-semibold text-indigo-600 pl-2">
                 <span className="absolute inset-0" aria-hidden="true" />
-                Read more <span aria-hidden="true">&rarr;</span>
+                Read more<span className="sr-only">: {announcement.title}</span> <span aria-hidden="true">&rarr;</span>
               </a>
             </div>
           )}
@@ -60,12 +60,12 @@ export default async function Header() {
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <a
               href="/register"
-              className="rounded-md primary-bg px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Sign up
             </a>
-            <a href="#about-heading" className="text-sm font-semibold leading-6 text-gray-900">
-              Learn more <span aria-hidden="true">→</span>
+            <a href="#about" className="text-sm font-semibold leading-6 text-gray-900">
+              Learn more<span className="sr-only"> about Stansbury Swim</span> <span aria-hidden="true">→</span>
             </a>
           </div>
         </div>

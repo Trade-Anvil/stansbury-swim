@@ -12,13 +12,15 @@ export default function Index() {
   return (
     <div className={styles.page}>
       <Nav />
-      <Header />
-      <Photos />
-      <About />
-      <Instructors />
-      <Pricing />
-      <Pools />
-      <ParentTot />
+      <main id="main">
+        <Header />
+        <Photos />
+        <About />
+        <Instructors />
+        <Pricing />
+        <Pools />
+        <ParentTot />
+      </main>
     </div>
   )
 }

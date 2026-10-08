@@ -5,6 +5,8 @@ import { VerifyEmailClient } from './verify-email-client'
 // redeem it. Rendering on demand also keeps useSearchParams out of the static export path.
 export const dynamic = 'force-dynamic'
 
+export const metadata = { title: 'Verify email' }
+
 export default function VerifyEmailPage() {
   return (
     <Suspense fallback={<div className="px-6 py-12 text-center text-sm text-gray-600">Loading...</div>}>

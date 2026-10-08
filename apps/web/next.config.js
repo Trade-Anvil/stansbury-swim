@@ -13,7 +13,11 @@ const nextConfig = {
     // that are never overwritten, so optimized copies can be cached for a long time. Keep this in sync with
     // STORED_IMAGE_PREFIX in src/app/utils/images.ts.
     // https://nextjs.org/docs/app/api-reference/components/image#remotepatterns
-    remotePatterns: [new URL('https://whembj0sslpokn6t.public.blob.vercel-storage.com/**')],
+    remotePatterns: [
+      new URL('https://whembj0sslpokn6t.public.blob.vercel-storage.com/**'),
+      // Poster frames for the YouTube video on the home page (components/youtube-video.tsx).
+      new URL('https://i.ytimg.com/vi/**'),
+    ],
     minimumCacheTTL: 2678400, // 31 days
   },
   compiler: {

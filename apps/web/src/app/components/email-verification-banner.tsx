@@ -41,9 +41,9 @@ export const EmailVerificationBanner = () => {
             ? `Confirm ${pending} to finish changing your email address. Until then we'll keep sending to ${user.email}.`
             : `Please confirm ${user.email} so your lesson reminders reach you.`}
         </span>
-        {sent ? (
-          <span className="font-semibold">Sent, check your inbox.</span>
-        ) : (
+        {/* Always mounted so screen readers announce the confirmation when it appears. */}
+        <span role="status">{sent && <span className="font-semibold">Sent, check your inbox.</span>}</span>
+        {!sent && (
           <button
             type="button"
             onClick={handleResend}

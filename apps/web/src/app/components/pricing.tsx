@@ -9,13 +9,13 @@ export default async function Pricing() {
   const products = await ProductService.findAll()
 
   return (
-    <div id="pricing" className="bg-white py-24 sm:py-32">
+    <div id="pricing" className="scroll-mt-24 bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-base font-semibold leading-7 text-indigo-600">Pricing</h2>
-          <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+          <p className="text-base font-semibold leading-7 text-indigo-600">Pricing</p>
+          <h2 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             Pricing plans for families of&nbsp;all&nbsp;sizes
-          </p>
+          </h2>
         </div>
         <div className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
           We offer a variety of pricing plans for families of all sizes and interest level. Choose the one that best

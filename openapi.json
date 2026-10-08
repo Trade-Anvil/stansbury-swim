@@ -195,6 +195,46 @@
         ]
       }
     },
+    "/api/auth/verify-email": {
+      "post": {
+        "operationId": "AuthenticationController_verifyEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email address confirmed"
+          }
+        },
+        "summary": "Confirm an email address from a verification link",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/auth/resend-verification": {
+      "post": {
+        "operationId": "AuthenticationController_resendVerification",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Verification email sent"
+          }
+        },
+        "summary": "Resend the verification link for the signed-in account",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
     "/api/auth/google": {
       "post": {
         "operationId": "GoogleAuthenticationController_authenticate",
@@ -2563,6 +2603,17 @@
           "password"
         ]
       },
+      "VerifyEmailDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
       "GoogleTokenDto": {
         "type": "object",
         "properties": {}
@@ -2657,6 +2708,12 @@
             "type": "string"
           },
           "email": {
+            "type": "string"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "pendingEmail": {
             "type": "string"
           },
           "firstName": {

@@ -6,7 +6,7 @@ export default async function Pools() {
   const pools = await PoolService.findAll()
 
   return (
-    <div id="pools" className="bg-white py-12 md:py-10 lg:py-10">
+    <div id="pools" className="scroll-mt-24 bg-white py-12 md:py-10 lg:py-10">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Our Pools</h2>

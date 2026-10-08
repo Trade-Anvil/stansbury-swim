@@ -1,6 +1,6 @@
 'use client'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import ProfileDropdown from './ProfileDropdown'
 import SignOutButton from './SignOutButton'
 import { AvatarComponent } from 'avatar-initials'
@@ -54,13 +54,13 @@ export default function Nav() {
                         key={item.name}
                         href={item.href}
                         className={classNames(
+                          // Brand blue is 3.6:1 on white, enough for the underline but not for 14px text.
                           isCurrent
-                            ? 'border-indigo-500 text-gray-900'
-                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                            ? 'border-[rgb(66,139,202)] text-gray-900'
+                            : 'border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900',
                           'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                         )}
                         aria-current={isCurrent ? 'page' : undefined}
-                        style={{ color: 'rgb(66,139,202)' }}
                       >
                         {item.name}
                       </a>
@@ -69,19 +69,11 @@ export default function Nav() {
                 </div>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <button
-                  type="button"
-                  className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
                 <ProfileDropdown />
               </div>
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
-                <DisclosureButton className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <DisclosureButton className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                   <span className="absolute -inset-0.5" />
                   <span className="sr-only">Open main menu</span>
                   {open ? (
@@ -135,14 +127,6 @@ export default function Nav() {
                 <div className="ml-3">
                   <div className="text-base font-medium text-gray-800">{user?.firstName}</div>
                 </div>
-                <button
-                  type="button"
-                  className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
               </div>
               <div className="mt-3 space-y-1">
                 {userNavigation.map(item => (

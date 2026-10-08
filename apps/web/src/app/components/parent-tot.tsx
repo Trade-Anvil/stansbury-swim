@@ -15,11 +15,13 @@ export default async function ParentTot() {
   ])
 
   return (
-    <div id="announcement" className="bg-white py-12 md:py-10 lg:py-10">
+    <div id="announcement" className="scroll-mt-24 bg-white py-12 md:py-10 lg:py-10">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">
         <div className="mx-auto max-w-2xl lg:mx-0">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{announcement?.heading}</h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">{announcement?.content}</p>
+          {announcement?.heading && (
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{announcement.heading}</h2>
+          )}
+          {announcement?.content && <p className="mt-6 text-lg leading-8 text-gray-600">{announcement.content}</p>}
         </div>
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-gray-900">Upcoming Group Lessons</h3>

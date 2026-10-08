@@ -4,15 +4,17 @@ import { Text } from '../../components/text'
 import { Button } from '../../components/button'
 import { Link } from '../../components/link'
 
+export const metadata = { title: 'Terms of Service' }
+
 export default function TermsOfService() {
   return (
-    <div className="flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen bg-white">
+    <main id="main" className="flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen bg-white">
       <div className="w-full max-w-2xl flex flex-col items-center">
         <Image src="/images/logo.png" alt="Stansbury Swim" width={180} height={60} className="mb-6" />
         <Heading level={1} className="mb-2 text-center">
           Stansbury Swim Terms of Service
         </Heading>
-        <Text className="mb-1 text-center text-sm text-zinc-400">Last modified on April 27, 2026</Text>
+        <Text className="mb-1 text-center text-sm text-zinc-500">Last modified on April 27, 2026</Text>
         <div className="mt-6 space-y-6 text-left">
           <Text>
             These Terms of Service ("Terms") govern your access to and use of{' '}
@@ -206,6 +208,6 @@ export default function TermsOfService() {
           Home
         </Button>
       </div>
-    </div>
+    </main>
   )
 }

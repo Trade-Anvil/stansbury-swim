@@ -83,9 +83,16 @@ export default function RegisterForm() {
                 {...register('firstName')}
                 id="firstName"
                 type="text"
+                autoComplete="given-name"
+                aria-invalid={!!errors.firstName}
+                aria-describedby={errors.firstName ? 'firstName-error' : undefined}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
-              {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>}
+              {errors.firstName && (
+                <p id="firstName-error" className="mt-1 text-sm text-red-600">
+                  {errors.firstName.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -98,9 +105,16 @@ export default function RegisterForm() {
                 {...register('lastName')}
                 id="lastName"
                 type="text"
+                autoComplete="family-name"
+                aria-invalid={!!errors.lastName}
+                aria-describedby={errors.lastName ? 'lastName-error' : undefined}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
-              {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>}
+              {errors.lastName && (
+                <p id="lastName-error" className="mt-1 text-sm text-red-600">
+                  {errors.lastName.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -115,9 +129,15 @@ export default function RegisterForm() {
               id="email"
               type="email"
               autoComplete="email"
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? 'email-error' : undefined}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+            {errors.email && (
+              <p id="email-error" className="mt-1 text-sm text-red-600">
+                {errors.email.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -130,10 +150,17 @@ export default function RegisterForm() {
               {...register('phoneNumber')}
               id="phoneNumber"
               type="tel"
+              autoComplete="tel"
               placeholder="(555) 555-5555"
+              aria-invalid={!!errors.phoneNumber}
+              aria-describedby={errors.phoneNumber ? 'phoneNumber-error' : undefined}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            {errors.phoneNumber && <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>}
+            {errors.phoneNumber && (
+              <p id="phoneNumber-error" className="mt-1 text-sm text-red-600">
+                {errors.phoneNumber.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -147,10 +174,18 @@ export default function RegisterForm() {
               id="password"
               type="password"
               autoComplete="new-password"
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? 'password-hint password-error' : 'password-hint'}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <p className="mt-1 text-sm text-gray-500">Password must be at least 10 characters long</p>
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+            <p id="password-hint" className="mt-1 text-sm text-gray-500">
+              Password must be at least 10 characters long
+            </p>
+            {errors.password && (
+              <p id="password-error" className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -164,9 +199,15 @@ export default function RegisterForm() {
               id="confirmPassword"
               type="password"
               autoComplete="new-password"
+              aria-invalid={!!errors.confirmPassword}
+              aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && (
+              <p id="confirmPassword-error" className="mt-1 text-sm text-red-600">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
         </div>
 

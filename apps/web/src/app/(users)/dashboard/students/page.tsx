@@ -4,6 +4,8 @@ import { StudentService } from '@/services/api/shared/studentService'
 import { StudentResponseDto } from '@/api'
 import StudentsClient from './StudentsClient'
 
+export const metadata = { title: 'My Students' }
+
 export default async function StudentsPage() {
   // Fetch students on the server
   let students: StudentResponseDto[] = []

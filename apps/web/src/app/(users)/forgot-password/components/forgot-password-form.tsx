@@ -67,13 +67,13 @@ export default function ForgotPasswordForm() {
           Send Reset Link
         </button>
         {error && (
-          <div className="mt-2 flex items-center gap-1">
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-red-500">{error}</p>
+          <div role="alert" className="mt-2 flex items-center gap-1">
+            <ExclamationCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
         {success && (
-          <div className="mt-2 text-sm text-green-600">
+          <div role="status" className="mt-2 text-sm text-green-700">
             If an account exists with that email, you will receive a password reset link.
           </div>
         )}

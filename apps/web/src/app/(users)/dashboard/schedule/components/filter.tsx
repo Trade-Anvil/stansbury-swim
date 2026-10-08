@@ -47,6 +47,16 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+// The buttons only show the day number, and availability is shown by color alone, so spell both out.
+function dayLabel(date: string, available: boolean) {
+  const label = new Date(`${date}T12:00:00`).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
+  return available ? `${label}, lessons available` : label
+}
+
 interface FilterProps {
   onPoolsChange: (pools: Option[]) => void
   onInstructorsChange: (instructors: Option[]) => void
@@ -198,7 +208,7 @@ export default function Filter({
                   <h2 className="text-lg font-medium text-gray-900">Filters</h2>
                   <button
                     type="button"
-                    className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close menu</span>
@@ -278,7 +288,7 @@ export default function Filter({
                                 </h2>
                                 <button
                                   type="button"
-                                  className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+                                  className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-500 hover:text-gray-700"
                                   disabled={selectedMonth === 0}
                                   onClick={() => setSelectedMonth(selectedMonth - 1)}
                                 >
@@ -287,7 +297,7 @@ export default function Filter({
                                 </button>
                                 <button
                                   type="button"
-                                  className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+                                  className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-500 hover:text-gray-700"
                                   disabled={selectedMonth === 3}
                                   onClick={() => setSelectedMonth(selectedMonth + 1)}
                                 >
@@ -341,6 +351,8 @@ export default function Filter({
                                             // Common styling for the button
                                             'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
                                           )}
+                                          aria-label={dayLabel(day.date, availableDates.includes(day.date))}
+                                          aria-pressed={day.isSelected}
                                           onClick={() => onDateChange(day.date)}
                                         >
                                           <time dateTime={day.date}>
@@ -468,7 +480,7 @@ export default function Filter({
                           <h2 className="flex-auto text-sm font-semibold text-gray-900">{monthNames[selectedMonth]}</h2>
                           <button
                             type="button"
-                            className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+                            className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-500 hover:text-gray-700"
                             disabled={selectedMonth === 0}
                             onClick={() => setSelectedMonth(selectedMonth - 1)}
                           >
@@ -477,7 +489,7 @@ export default function Filter({
                           </button>
                           <button
                             type="button"
-                            className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+                            className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-500 hover:text-gray-700"
                             disabled={selectedMonth === 3}
                             onClick={() => setSelectedMonth(selectedMonth + 1)}
                           >
@@ -529,6 +541,8 @@ export default function Filter({
                                       // Common styling for the button
                                       'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
                                     )}
+                                    aria-label={dayLabel(day.date, availableDates.includes(day.date))}
+                                    aria-pressed={day.isSelected}
                                     onClick={() => onDateChange(day.date)}
                                   >
                                     <time dateTime={day.date}>{day.date.split('-').pop()?.replace(/^0/, '')}</time>

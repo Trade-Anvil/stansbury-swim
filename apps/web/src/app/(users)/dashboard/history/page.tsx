@@ -56,11 +56,13 @@ export default function History() {
     <>
       <Header title="History" />
       <div className="py-10">
-        <main className="px-6">
+        <div className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             {transactions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20">
-                <span className="text-4xl mb-4">🕰️</span>
+                <span className="text-4xl mb-4" aria-hidden="true">
+                  🕰️
+                </span>
                 <h2 className="text-xl font-semibold mb-2">No history yet</h2>
                 <p className="text-gray-500 text-center max-w-md">
                   You haven't made any transactions or scheduled any lessons yet. When you do, your history will appear
@@ -140,7 +142,7 @@ export default function History() {
                               {details && <p className="text-sm text-gray-500">{details}</p>}
                             </div>
                             <div className="whitespace-nowrap text-right text-sm text-gray-500">
-                              <time dateTime={transactionDateFormatted}>{transactionDateFormatted}</time>
+                              <time dateTime={transaction.createdAt}>{transactionDateFormatted}</time>
                             </div>
                           </div>
                         </div>
@@ -151,7 +153,7 @@ export default function History() {
               </ul>
             )}
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

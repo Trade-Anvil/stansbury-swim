@@ -1,13 +1,15 @@
 import Link from 'next/link'
 import ForgotPasswordForm from './components/forgot-password-form'
 
+export const metadata = { title: 'Forgot password' }
+
 export default function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <main id="main" className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Reset your password
-        </h2>
+        </h1>
         <p className="mt-2 text-center text-sm text-gray-600">
           Enter your email address and we'll send you a link to reset your password.
         </p>
@@ -22,6 +24,6 @@ export default function ForgotPasswordPage() {
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   )
 }

@@ -7,7 +7,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <ClientProviders>
       <div className="min-h-full">
         <Nav />
-        <main className="mx-6">{children}</main>
+        <main id="main" className="mx-6">
+          {children}
+        </main>
       </div>
     </ClientProviders>
   )

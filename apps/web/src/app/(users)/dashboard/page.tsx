@@ -1,5 +1,7 @@
 export const dynamic = 'force-dynamic'
 
+export const metadata = { title: 'Dashboard' }
+
 import { TransactionsService } from '@/services/api/shared/transactionsService'
 import Credits from './components/Credits'
 import UpcomingLessons from './components/UpcomingLessons'
@@ -43,14 +45,14 @@ export default async function Index() {
   return (
     <div>
       <Header title="Dashboard" />
-      <main className="px-6">
+      <div className="px-6">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className={styles.page}>
             <Credits stats={stats} />
             <UpcomingLessons instructors={instructors} pools={pools} />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

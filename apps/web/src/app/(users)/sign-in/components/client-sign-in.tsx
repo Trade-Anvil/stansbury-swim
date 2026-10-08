@@ -55,7 +55,11 @@ export default function ClientSignIn() {
           .
         </p>
       </div>
-      {error && <div className="mt-4 text-red-500">{error}</div>}
+      {error && (
+        <div role="alert" className="mt-4 text-red-600">
+          {error}
+        </div>
+      )}
     </>
   )
 }

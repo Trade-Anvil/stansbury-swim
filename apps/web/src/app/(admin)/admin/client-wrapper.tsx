@@ -5,6 +5,7 @@ import AdminProtectedPage from './components/admin-protected-page'
 import { AppProvider } from '@/app/app-provider'
 import { CreditsProvider, InstructorsProvider, PoolsProvider } from '@contexts/index'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { MotionConfig } from 'framer-motion'
 
 interface ClientWrapperProps {
   children: React.ReactNode
@@ -19,7 +20,10 @@ export function ClientWrapper({ children, googleClientId }: ClientWrapperProps) 
           <AppProvider>
             <InstructorsProvider>
               <PoolsProvider>
-                <CreditsProvider>{children}</CreditsProvider>
+                <CreditsProvider>
+                  {/* Skips the sidebar and navbar indicator animations for people who ask for reduced motion. */}
+                  <MotionConfig reducedMotion="user">{children}</MotionConfig>
+                </CreditsProvider>
               </PoolsProvider>
             </InstructorsProvider>
           </AppProvider>

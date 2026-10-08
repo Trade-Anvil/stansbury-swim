@@ -10,7 +10,7 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/20/solid'
-import { Listbox, ListboxOption, ListboxOptions, Transition, ListboxButton } from '@headlessui/react'
+import { Label, Listbox, ListboxOption, ListboxOptions, Transition, ListboxButton } from '@headlessui/react'
 import Filter from './components/filter'
 import { StudentService } from '@/services/api/shared/studentService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
@@ -252,7 +252,7 @@ export default function Schedule() {
   return (
     <div>
       <Header title="Schedule" />
-      <main className="px-6">
+      <div className="px-6">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-5">
           {!user?.signedWaiver && (
             <div className="mt-2 border-l-4 border-yellow-400 bg-yellow-50 p-4 mb-4">
@@ -332,6 +332,9 @@ export default function Schedule() {
                           >
                             {({ open }) => (
                               <div className="relative mt-2">
+                                <Label className="sr-only">
+                                  Student for {name}, <Time dateTime={schedule.startDateTime} />
+                                </Label>
                                 <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
                                   <span className="flex items-center">
                                     <span className="ml-3 block truncate">{student?.name ?? 'Available'}</span>
@@ -433,7 +436,7 @@ export default function Schedule() {
                       <button
                         onClick={handlePrevPage}
                         disabled={currentPage === 1}
-                        className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                        className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-500 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
                       >
                         <span className="sr-only">Previous</span>
                         <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -441,7 +444,7 @@ export default function Schedule() {
                       <button
                         onClick={handleNextPage}
                         disabled={currentPage === totalPages}
-                        className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                        className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-500 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
                       >
                         <span className="sr-only">Next</span>
                         <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -452,7 +455,7 @@ export default function Schedule() {
               </div>
             )}
             {error == 'CREDITS' ? (
-              <div className="mt-10 border-l-4 border-yellow-400 bg-yellow-50 p-4">
+              <div role="alert" className="mt-10 border-l-4 border-yellow-400 bg-yellow-50 p-4">
                 <div className="flex">
                   <div className="shrink-0">
                     <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400" />
@@ -460,7 +463,10 @@ export default function Schedule() {
                   <div className="ml-3">
                     <p className="text-sm text-yellow-700">
                       You have no credits left.{' '}
-                      <a href="/purchase" className="font-medium text-yellow-700 underline hover:text-yellow-600">
+                      <a
+                        href="/dashboard/purchase"
+                        className="font-medium text-yellow-700 underline hover:text-yellow-600"
+                      >
                         Purchase more credits to schedule more lessons.
                       </a>
                     </p>
@@ -480,7 +486,7 @@ export default function Schedule() {
                 </div>
               </div>
             ) : error ? (
-              <div className="mt-10 rounded-md bg-red-50 p-4">
+              <div role="alert" className="mt-10 rounded-md bg-red-50 p-4">
                 <div className="flex">
                   <div className="shrink-0">
                     <XCircleIcon aria-hidden="true" className="size-5 text-red-400" />
@@ -508,7 +514,7 @@ export default function Schedule() {
             <div className="py-20">
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                  <h1 className="text-base font-semibold text-gray-900">Pending Reservations</h1>
+                  <h2 className="text-base font-semibold text-gray-900">Pending Reservations</h2>
                   <p className="mt-2 text-sm text-gray-700">
                     When you're ready press <strong className="font-semibold text-gray-900">Reserve</strong> to finish
                     scheduling your lessons.
@@ -593,6 +599,10 @@ export default function Schedule() {
                                 }}
                               >
                                 Remove
+                                <span className="sr-only">
+                                  {' '}
+                                  {student.name} with {instructor.name}
+                                </span>
                               </button>
                               {index !== 0 ? (
                                 <div className="absolute -top-px left-0 right-6 h-px bg-gray-200" />
@@ -610,7 +620,7 @@ export default function Schedule() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

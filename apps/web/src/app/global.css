@@ -88,9 +88,15 @@ pre {
   border-style: solid;
   border-color: currentColor;
 }
-a {
-  color: inherit;
-  text-decoration: inherit;
+/*
+  In the base layer so Tailwind utilities can override it. Unlayered, it beat every text color class on links
+  (Tailwind v4 puts utilities in a cascade layer, and unlayered CSS always wins over layered CSS).
+*/
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
 }
 pre {
   font-family:

@@ -31,7 +31,7 @@ export class PaypalService {
     }
   }
 
-  async createOrder(productId: string, quantity: number = 1, user: User) {
+  async createOrder(productId: string, quantity = 1, user: User) {
     const product = await this.productService.findOne(productId)
 
     const PaypalClient = this.client()

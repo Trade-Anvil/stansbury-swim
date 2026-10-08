@@ -1,4 +1,5 @@
-import { IStudent, Role } from '@lesson-scheduler/shared'
+import { Role } from '../enums/role.enum'
+import { IStudent } from './student'
 
 export interface IUser {
   id: string

@@ -3,6 +3,6 @@ export class RegistrationReminderEvent {
     public readonly userId: string,
     public readonly scheduleId: string,
     public readonly studentId: string,
-    public readonly corrected: boolean = false,
+    public readonly corrected = false,
   ) {}
 }

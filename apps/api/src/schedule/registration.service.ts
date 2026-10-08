@@ -84,60 +84,54 @@ export class RegistrationService {
     }
 
     // Prepare registration object (transactionId will be set after transaction creation)
-    let transaction
-    let registration
-    try {
-      // Atomically push registration if class is not full
-      registration = {
-        userId: new Types.ObjectId(createRegistrationDto.userId),
-        studentId: new Types.ObjectId(createRegistrationDto.studentId),
-        createdAt: new Date(),
-        status: RegistrationStatusEnum.CONFIRMED,
-        transactionId: undefined, // placeholder
-      }
-
-      // Atomically check and push registration. The capacity guard counts confirmed seats
-      // plus unexpired holds, so a seat reserved mid-checkout can't be double-booked here.
-      const updated = await this.model.findOneAndUpdate(
-        {
-          _id: new Types.ObjectId(scheduleId),
-          $expr: hasAvailableSeatExpr,
-        },
-        { $push: { registrations: registration } },
-        { new: true },
-      )
-
-      if (!updated) {
-        throw new BadRequestException('Class is full')
-      }
-
-      // Now create the transaction
-      transaction = await this.transactionService.create({
-        userId: createRegistrationDto.userId,
-        credits: -1,
-        creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
-        transactionType: TransactionTypesEnum.Register,
-        scheduleId,
-        studentId: createRegistrationDto.studentId,
-      })
-
-      // Update the registration with the transactionId
-      await this.model.updateOne(
-        {
-          _id: new Types.ObjectId(scheduleId),
-          'registrations.userId': new Types.ObjectId(createRegistrationDto.userId),
-          'registrations.studentId': new Types.ObjectId(createRegistrationDto.studentId),
-        },
-        {
-          $set: {
-            'registrations.$.transactionId': transaction.id,
-          },
-        },
-      )
-    } catch (err) {
-      // Optionally: rollback if transaction was created but registration failed, or vice versa
-      throw err
+    // Atomically push registration if class is not full
+    const registration = {
+      userId: new Types.ObjectId(createRegistrationDto.userId),
+      studentId: new Types.ObjectId(createRegistrationDto.studentId),
+      createdAt: new Date(),
+      status: RegistrationStatusEnum.CONFIRMED,
+      transactionId: undefined, // placeholder
     }
+
+    // Atomically check and push registration. The capacity guard counts confirmed seats
+    // plus unexpired holds, so a seat reserved mid-checkout can't be double-booked here.
+    const updated = await this.model.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(scheduleId),
+        $expr: hasAvailableSeatExpr,
+      },
+      { $push: { registrations: registration } },
+      { new: true },
+    )
+
+    if (!updated) {
+      throw new BadRequestException('Class is full')
+    }
+
+    // Not rolled back: if the transaction below fails after the seat was pushed, the seat stays taken
+    // without a credit being spent.
+    const transaction = await this.transactionService.create({
+      userId: createRegistrationDto.userId,
+      credits: -1,
+      creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
+      transactionType: TransactionTypesEnum.Register,
+      scheduleId,
+      studentId: createRegistrationDto.studentId,
+    })
+
+    // Update the registration with the transactionId
+    await this.model.updateOne(
+      {
+        _id: new Types.ObjectId(scheduleId),
+        'registrations.userId': new Types.ObjectId(createRegistrationDto.userId),
+        'registrations.studentId': new Types.ObjectId(createRegistrationDto.studentId),
+      },
+      {
+        $set: {
+          'registrations.$.transactionId': transaction.id,
+        },
+      },
+    )
 
     const entity = await this.model.findById(schedule._id)
     if (!entity) {

@@ -66,4 +66,5 @@ async function bootstrap() {
   Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`)
 }
 
-bootstrap()
+// A startup failure still surfaces as an unhandled rejection and stops the process, as before.
+void bootstrap()

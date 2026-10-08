@@ -251,7 +251,7 @@ export class EmailService {
     user: User,
     student: Student,
     schedule: Schedule,
-    corrected: boolean = false,
+    corrected = false,
   ): Promise<boolean> {
     const formattedDateTimeMdt = formatInTimeZone(schedule.startDateTime, ORG_TIMEZONE, 'MM/dd/yyyy hh:mm a')
     const pool = await this.poolService.findOne(schedule.poolId)

@@ -3,8 +3,13 @@ import { Reflector } from '@nestjs/core'
 import { RATE_LIMIT_KEY, RateLimitGuard, RateLimitOptions, resetRateLimits } from './rate-limit.guard'
 
 class FakeController {}
-function register() {}
-function login() {}
+// Stand-in route handlers. The guard only reads their names and metadata, so they have no body.
+function register() {
+  // intentionally empty
+}
+function login() {
+  // intentionally empty
+}
 
 const contextFor = (handler: () => void, headers: Record<string, string>, options?: RateLimitOptions) => {
   if (options) {
@@ -70,7 +75,9 @@ describe('RateLimitGuard', () => {
   })
 
   it('ignores routes with no limit declared', () => {
-    function unlimited() {}
+    function unlimited() {
+      // intentionally empty
+    }
     const ctx = contextFor(unlimited, {})
 
     for (let i = 0; i < 50; i++) {

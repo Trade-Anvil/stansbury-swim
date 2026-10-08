@@ -20,6 +20,15 @@ module.exports = [
   ...nx.configs['flat/javascript'],
 
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      // DTO properties need their explicit type: decorator metadata (Swagger, class-validator) is only
+      // emitted from annotations, so `active = false` would be described as Object instead of Boolean.
+      '@typescript-eslint/no-inferrable-types': ['error', { ignoreProperties: true }],
+    },
+  },
+
+  {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       '@nx/enforce-module-boundaries': [

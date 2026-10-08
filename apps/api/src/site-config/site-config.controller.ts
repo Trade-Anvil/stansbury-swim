@@ -1,6 +1,6 @@
 import { Controller, Get, Post } from '@nestjs/common'
 import { SiteConfigService } from './site-config.service'
-import { Role } from '../../../../libs/shared/src/enums/role.enum'
+import { Role } from '@lesson-scheduler/shared'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { SiteConfigResponseDto } from './dto/site-config-response.dto'

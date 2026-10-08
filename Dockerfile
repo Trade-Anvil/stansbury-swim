@@ -10,11 +10,15 @@ COPY package*.json ./
 
 ENV NX_SKIP_NATIVE_BUILD=true
 
-RUN npm ci --legacy-peer-deps --ignore-scripts && node node_modules/nx/bin/post-install || true
+# Same install as CI. --legacy-peer-deps used to be here, but it skips peer dependencies, and webpack is
+# one (of webpack-cli 7). Scripts are skipped because nothing in the build needs them and Nx's
+# post-install step has hung builds before.
+RUN npm ci --ignore-scripts
 
 COPY . .
 
-RUN npm run build:api
+# webpack-cli exits 0 when it can't run, so check the bundle exists instead of trusting the exit code.
+RUN npm run build:api && test -f dist/apps/api/main.js
 
 # --- Final runtime stage ---
 FROM node:24 as runner
@@ -24,7 +28,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm ci --only=production --legacy-peer-deps
+RUN npm ci --omit=dev
 
 COPY --from=builder /app/builder/dist/apps/api ./dist
 

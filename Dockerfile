@@ -13,7 +13,9 @@ ENV NX_SKIP_NATIVE_BUILD=true
 # Same install as CI. --legacy-peer-deps used to be here, but it skips peer dependencies, and webpack is
 # one (of webpack-cli 7). Scripts are skipped because nothing in the build needs them and Nx's
 # post-install step has hung builds before.
-RUN npm ci --ignore-scripts
+# --include=dev so the build keeps the dev dependencies it needs (nx, webpack, typescript) even if
+# NODE_ENV=production reaches it, for example as a build arg through the ARG above.
+RUN npm ci --ignore-scripts --include=dev
 
 COPY . .
 

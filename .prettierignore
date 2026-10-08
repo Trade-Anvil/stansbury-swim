@@ -3,3 +3,5 @@
 /coverage
 /.nx/cache
 .nx/self-healing
+# Written by the API on startup (apps/api/src/main.ts), so its formatting is whatever JSON.stringify produces
+/openapi.json

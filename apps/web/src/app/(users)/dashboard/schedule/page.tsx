@@ -28,6 +28,8 @@ import { InstructorService } from '@/services/api/shared/instructorService'
 import Header from '../components/Header'
 import Time from '@/app/components/time'
 import { ORG_TIMEZONE as TIMEZONE } from '@/app/utils/dates'
+import { isStoredImage } from '@/app/utils/images'
+import Image from 'next/image'
 
 export interface Option {
   value: string
@@ -306,7 +308,17 @@ export default function Schedule() {
                         key={schedule.id}
                         className="group flex items-center space-x-4 rounded-xl px-4 py-2 focus-within:bg-gray-100 hover:bg-gray-100"
                       >
-                        <img src={instructor?.imageUrl} alt="" className="h-10 w-10 flex-none rounded-full" />
+                        {isStoredImage(instructor?.imageUrl) ? (
+                          <Image
+                            src={instructor.imageUrl}
+                            alt=""
+                            width={40}
+                            height={40}
+                            className="h-10 w-10 flex-none rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-10 w-10 flex-none rounded-full bg-gray-100" />
+                        )}
                         <div className="flex-auto">
                           <p className="text-gray-900">{name}</p>
                           <p className="mt-0.5">

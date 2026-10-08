@@ -6,6 +6,8 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@component
 import { Link } from '@components/link'
 import { EllipsisVerticalIcon } from '@heroicons/react/16/solid'
 import { Pool } from '@lib/pool'
+import { isStoredImage } from '@/app/utils/images'
+import Image from 'next/image'
 import PoolEditModal from './pool-edit-modal'
 import DeletePoolModal from './delete-pool-modal'
 
@@ -52,7 +54,16 @@ export default function PoolsList({ pools }: PoolsListProps) {
                 <div className="flex gap-6 py-6">
                   <div className="w-32 shrink-0">
                     <Link href={`/admin/pools/${pool.id}`} aria-hidden="true">
-                      <img className="rounded-lg shadow-sm" src={pool.imageUrl} alt="" />
+                      {pool.imageUrl && (
+                        <Image
+                          className="h-auto w-full rounded-lg shadow-sm"
+                          src={pool.imageUrl}
+                          alt=""
+                          width={128}
+                          height={128}
+                          unoptimized={!isStoredImage(pool.imageUrl)}
+                        />
+                      )}
                     </Link>
                   </div>
                   <div className="space-y-1.5">

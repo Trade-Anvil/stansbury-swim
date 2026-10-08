@@ -1,4 +1,6 @@
+import Image from 'next/image'
 import { PoolService } from '@/services/api/shared/poolService'
+import { isStoredImage } from '@/app/utils/images'
 
 export default async function Pools() {
   const pools = await PoolService.findAll()
@@ -19,7 +21,18 @@ export default async function Pools() {
         >
           {pools.map(pool => (
             <li key={pool.name}>
-              <img className="aspect-[3/2] w-full rounded-2xl object-cover" src={pool.imageUrl} alt="" />
+              {isStoredImage(pool.imageUrl) ? (
+                <Image
+                  className="aspect-[3/2] w-full rounded-2xl object-cover"
+                  src={pool.imageUrl}
+                  alt={`Photo of ${pool.name}`}
+                  width={1200}
+                  height={800}
+                  sizes="(min-width: 1280px) 25rem, (min-width: 640px) 50vw, 100vw"
+                />
+              ) : (
+                <div className="aspect-[3/2] w-full rounded-2xl bg-gray-100" />
+              )}
               <h3 className="mt-6 text-lg font-semibold leading-8 text-gray-900">{pool.name}</h3>
               <p className="text-base leading-7 text-gray-600">{pool.address}</p>
               <p className="mt-4 text-base leading-7 text-gray-600">{pool.details}</p>

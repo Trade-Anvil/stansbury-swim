@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { AnnouncementService } from '@/services/api/shared/announcementService'
 import { Announcement } from '@lesson-scheduler/shared'
 
@@ -36,12 +37,18 @@ export default async function Header() {
           )}
         </div>
         <div className="text-center">
-          <img
-            className="text-center"
-            src="/images/logo.png"
-            alt="Stansbury Swim"
-            style={{ margin: 'auto', width: 250 }}
-          />
+          <h1>
+            <Image
+              className="text-center"
+              src="/images/logo.png"
+              alt="Stansbury Swim"
+              width={250}
+              height={174}
+              loading="eager"
+              fetchPriority="high"
+              style={{ margin: 'auto', width: 250 }}
+            />
+          </h1>
           {/* <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Stansbury swim</h1> */}
           <div className="mt-6 text-lg leading-8 text-gray-600">
             <ul className="list-none">
@@ -57,7 +64,7 @@ export default async function Header() {
             >
               Sign up
             </a>
-            <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+            <a href="#about-heading" className="text-sm font-semibold leading-6 text-gray-900">
               Learn more <span aria-hidden="true">→</span>
             </a>
           </div>

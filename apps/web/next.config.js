@@ -8,7 +8,14 @@ const { withSentryConfig } = require('@sentry/nextjs/config')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: true,
-  images: { unoptimized: true },
+  images: {
+    // Instructor and pool photos are uploaded to the stansbury-swim-images Vercel Blob store under unique file names
+    // that are never overwritten, so optimized copies can be cached for a long time. Keep this in sync with
+    // STORED_IMAGE_PREFIX in src/app/utils/images.ts.
+    // https://nextjs.org/docs/app/api-reference/components/image#remotepatterns
+    remotePatterns: [new URL('https://whembj0sslpokn6t.public.blob.vercel-storage.com/**')],
+    minimumCacheTTL: 2678400, // 31 days
+  },
   compiler: {
     // Strips the Sentry SDK's debug logging from the bundle. Sentry's own treeshake option is webpack-only and
     // builds use Turbopack, so set the flag directly. Must be the boolean false: Next JSON-encodes these values,

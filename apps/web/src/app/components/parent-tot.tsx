@@ -1,8 +1,10 @@
+import Image from 'next/image'
 import { AnnouncementService } from '@/services/api/shared/announcementService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { InstructorService } from '@/services/api/shared/instructorService'
 import { PoolService } from '@/services/api/shared/poolService'
 import Time from './time'
+import { isStoredImage } from '@/app/utils/images'
 
 export default async function ParentTot() {
   const [announcement, schedules, instructors, pools] = await Promise.all([
@@ -34,7 +36,17 @@ export default async function ParentTot() {
                     className="group flex items-center space-x-4 rounded-xl px-4 py-2 focus-within:bg-gray-100 hover:bg-gray-100"
                   >
                     <a href="/dashboard/purchase" className="flex-auto">
-                      <img src={instructor?.imageUrl} alt="" className="h-10 w-10 flex-none rounded-full" />
+                      {isStoredImage(instructor?.imageUrl) ? (
+                        <Image
+                          src={instructor.imageUrl}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="h-10 w-10 flex-none rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-10 w-10 flex-none rounded-full bg-gray-100" />
+                      )}
                       <div className="flex-auto">
                         <p className="text-gray-900">{name}</p>
                         <p className="mt-0.5">

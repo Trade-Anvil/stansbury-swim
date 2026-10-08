@@ -9,6 +9,8 @@ import { Student } from '@lib/index'
 import { useCredits } from '@contexts/index'
 import { ScheduleResponseDto, InstructorResponseDto, PoolDto, StudentResponseDto } from '@/api'
 import { ORG_TIMEZONE } from '@/app/utils/dates'
+import { isStoredImage } from '@/app/utils/images'
+import Image from 'next/image'
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
@@ -170,7 +172,17 @@ export default function UpcomingLessons({
 
                 return (
                   <li key={schedule.id} className="relative flex space-x-6 py-6 xl:static">
-                    <img src={instructor.imageUrl} alt="" className="h-14 w-14 flex-none rounded-full" />
+                    {isStoredImage(instructor.imageUrl) ? (
+                      <Image
+                        src={instructor.imageUrl}
+                        alt=""
+                        width={56}
+                        height={56}
+                        className="h-14 w-14 flex-none rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-14 w-14 flex-none rounded-full bg-gray-100" />
+                    )}
                     <div className="flex-auto">
                       <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0">
                         {studentName} with {instructor.name} (
@@ -299,7 +311,17 @@ export default function UpcomingLessons({
 
                 return (
                   <li key={schedule.id} className="relative flex space-x-6 py-6 xl:static">
-                    <img src={instructor.imageUrl} alt="" className="h-14 w-14 flex-none rounded-full" />
+                    {isStoredImage(instructor.imageUrl) ? (
+                      <Image
+                        src={instructor.imageUrl}
+                        alt=""
+                        width={56}
+                        height={56}
+                        className="h-14 w-14 flex-none rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-14 w-14 flex-none rounded-full bg-gray-100" />
+                    )}
                     <div className="flex-auto">
                       <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0">
                         {student.name} with {instructor.name} (

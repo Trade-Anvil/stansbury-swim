@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <UserProvider>
         <Analytics />
         <SpeedInsights />
-        <html className="h-full bg-white">
+        <html lang="en" className="h-full bg-white">
           <head>
             <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
           </head>

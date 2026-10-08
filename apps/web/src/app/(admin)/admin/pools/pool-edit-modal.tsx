@@ -8,6 +8,7 @@ import { Textarea } from '@components/textarea'
 import { PoolService } from '@/services/api/shared/poolService'
 import { FileService } from '@/services/api/shared/fileService'
 import Image from 'next/image'
+import { isStoredImage } from '@/app/utils/images'
 import { PoolDto } from '@/api'
 
 interface PoolEditModalProps {
@@ -161,7 +162,13 @@ export default function PoolEditModal({ isOpen, onClose, onSuccess, pool }: Pool
                 {previewUrl && (
                   <div className="mt-2">
                     <div className="relative h-32 w-32 overflow-hidden rounded-lg">
-                      <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                      <Image
+                        src={previewUrl}
+                        alt="Preview"
+                        fill
+                        unoptimized={!isStoredImage(previewUrl)}
+                        className="object-cover"
+                      />
                     </div>
                   </div>
                 )}

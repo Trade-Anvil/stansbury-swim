@@ -10,7 +10,7 @@ export default function GlobalError({ error }: { error: Error & { digest?: strin
   }, [error])
 
   return (
-    <html>
+    <html lang="en">
       <body>
         <div className="flex min-h-screen flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-gray-900">Something went wrong!</h1>

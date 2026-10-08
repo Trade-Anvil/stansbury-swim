@@ -49,7 +49,7 @@ export function NavClient({ navigation, isLoggedIn }: NavClientProps) {
           <div className="flex items-center justify-between">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Stansbury Swim</span>
-              <Image src="/images/logo.png" className="h-8 w-ato" alt="Stansbury Swim" width={50} height={35} />
+              <Image src="/images/logo.png" className="h-8 w-auto" alt="" width={50} height={35} />
             </a>
             <button
               type="button"

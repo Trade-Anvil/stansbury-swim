@@ -5,6 +5,8 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@component
 import { Link } from '@components/link'
 import { EllipsisVerticalIcon } from '@heroicons/react/16/solid'
 import { Instructor } from '@lib/instructor'
+import { isStoredImage } from '@/app/utils/images'
+import Image from 'next/image'
 import { useState } from 'react'
 import DeleteInstructorModal from './delete-instructor-modal'
 import InstructorModal from './instructor-modal'
@@ -48,7 +50,16 @@ export default function InstructorsList({ instructors }: InstructorsListProps) {
               <div className="flex gap-6 py-6">
                 <div className="w-32 shrink-0">
                   <Link href={`/admin/instructors/${instructor.id}`} aria-hidden="true">
-                    <img className="rounded-lg shadow-sm" src={instructor.imageUrl} alt="" />
+                    {instructor.imageUrl && (
+                      <Image
+                        className="h-auto w-full rounded-lg shadow-sm"
+                        src={instructor.imageUrl}
+                        alt=""
+                        width={128}
+                        height={128}
+                        unoptimized={!isStoredImage(instructor.imageUrl)}
+                      />
+                    )}
                   </Link>
                 </div>
                 <div className="space-y-1.5">

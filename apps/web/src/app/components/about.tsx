@@ -33,7 +33,9 @@ export default function About() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-indigo-600">Learn faster</h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Why choose Stansbury Swim?</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl" id="about-heading">
+            Why choose Stansbury Swim?
+          </p>
           <p className="mt-6 text-lg leading-8 text-gray-600">
             We specialize in teaching beginner skills and stroke development to kids ages 3-10.
           </p>
@@ -103,6 +105,8 @@ export default function About() {
             <div className="aspect-w-16 aspect-h-9">
               <iframe
                 src="https://www.youtube.com/embed/P4UDQ3vm10k"
+                title="Video: Brilya swimming"
+                loading="lazy"
                 frameBorder="0"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen={true}

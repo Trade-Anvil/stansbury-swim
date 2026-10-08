@@ -8,6 +8,7 @@ import { Textarea } from '@components/textarea'
 import { InstructorService } from '@/services/api/shared/instructorService'
 import { FileService } from '@/services/api/shared/fileService'
 import Image from 'next/image'
+import { isStoredImage } from '@/app/utils/images'
 import { Instructor } from '@lib/instructor'
 
 interface InstructorModalProps {
@@ -142,7 +143,13 @@ export default function InstructorModal({ isOpen, onClose, onSuccess, instructor
                 {previewUrl && (
                   <div className="mt-2">
                     <div className="relative h-32 w-32 overflow-hidden rounded-lg">
-                      <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                      <Image
+                        src={previewUrl}
+                        alt="Preview"
+                        fill
+                        unoptimized={!isStoredImage(previewUrl)}
+                        className="object-cover"
+                      />
                     </div>
                   </div>
                 )}

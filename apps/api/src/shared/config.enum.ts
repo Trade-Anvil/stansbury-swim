@@ -10,7 +10,6 @@ export enum ConfigEnum {
   PaypalClientId = 'PAYPAL_CLIENT_ID',
   PaypalClientSecret = 'PAYPAL_CLIENT_SECRET',
   PaypalEnvironment = 'PAYPAL_ENVIRONMENT',
-  SupabaseUrl = 'SUPABASE_URL',
-  SupabaseServiceRoleKey = 'SUPABASE_SERVICE_ROLE_KEY',
+  BlobReadWriteToken = 'BLOB_READ_WRITE_TOKEN',
   TurnstileSecretKey = 'TURNSTILE_SECRET_KEY',
 }

@@ -32,26 +32,26 @@ export class BaseService {
     OpenAPI.BASE = process.env.NEXT_PUBLIC_API_URL || ''
 
     if (typeof window === 'undefined') {
-      // Server-side configuration
-      try {
-        const { cookies } = await import('next/headers')
-        const cookieStore = await cookies()
-        const cookieString = cookieStore.toString()
-
-        OpenAPI.HEADERS = {
-          ...OpenAPI.HEADERS,
-          Cookie: cookieString,
-        }
-      } catch (error) {
-        // If we can't get cookies (e.g., in a client component), just continue without them
-        console.warn('Could not get cookies for server-side request')
-      }
+      // OpenAPI is one object shared by every request on the server. A cookie string stored on it is safe only while
+      // no I/O wait sits between the write and the generated client's read, or another request can overwrite it.
+      // The generated client calls this resolver per request instead, and cookies() reads that request's cookies.
+      OpenAPI.HEADERS = serverRequestCookies
     } else {
       // Client-side configuration
       OpenAPI.HEADERS = config.headers
       OpenAPI.CREDENTIALS = config.credentials || 'include'
       OpenAPI.WITH_CREDENTIALS = true
     }
+  }
+}
+
+async function serverRequestCookies(): Promise<Record<string, string>> {
+  try {
+    const { cookies } = await import('next/headers')
+    return { Cookie: (await cookies()).toString() }
+  } catch {
+    // No request to read from (for example inside unstable_cache), so send no cookies.
+    return {}
   }
 }
 

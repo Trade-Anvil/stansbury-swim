@@ -2,6 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build:web:prod",
   "outputDirectory": "apps/web/.next",
-  "installCommand": "npm install",
-  "framework": "nextjs"
+  "installCommand": "npm ci",
+  "framework": "nextjs",
+  "regions": ["pdx1"]
 }

@@ -10,7 +10,7 @@ import { HashingService } from '../hashing/hashing.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
 import { UserService } from '../../user/user.service'
-import { JwtService } from '@nestjs/jwt'
+import { JwtService, JwtSignOptions } from '@nestjs/jwt'
 import { ActiveUserData } from './interfaces/active-user-data.interface'
 import { User } from '../../user/user'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
@@ -234,7 +234,7 @@ export class AuthenticationService {
     return this.generateTokens(adminUser)
   }
 
-  private async signToken<T>(userId: string, payload?: T, expiresIn?: string) {
+  private async signToken<T>(userId: string, payload?: T, expiresIn?: JwtSignOptions['expiresIn']) {
     return await this.jwtService.signAsync(
       {
         sub: userId,

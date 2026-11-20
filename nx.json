@@ -29,15 +29,6 @@
       }
     },
     {
-      "plugin": "@nx/cypress/plugin",
-      "options": {
-        "targetName": "e2e",
-        "componentTestingTargetName": "component-test",
-        "ciTargetName": "e2e-ci",
-        "openTargetName": "open-cypress"
-      }
-    },
-    {
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"

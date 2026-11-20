@@ -1,9 +1,9 @@
 import Image from 'next/image'
-import { PoolService } from '@/services/api/shared/poolService'
+import { getPools } from '@/app/utils/public-data'
 import { isStoredImage } from '@/app/utils/images'
 
 export default async function Pools() {
-  const pools = await PoolService.findAll()
+  const pools = (await getPools()) ?? []
 
   return (
     <div id="pools" className="scroll-mt-24 bg-white py-12 md:py-10 lg:py-10">

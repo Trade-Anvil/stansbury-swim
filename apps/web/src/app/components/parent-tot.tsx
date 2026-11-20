@@ -1,17 +1,14 @@
 import Image from 'next/image'
-import { AnnouncementService } from '@/services/api/shared/announcementService'
-import { ScheduleService } from '@/services/api/shared/scheduleService'
-import { InstructorService } from '@/services/api/shared/instructorService'
-import { PoolService } from '@/services/api/shared/poolService'
+import { getAnnouncement, getInstructors, getParentTotSchedules, getPools } from '@/app/utils/public-data'
 import Time from './time'
 import { isStoredImage } from '@/app/utils/images'
 
 export default async function ParentTot() {
   const [announcement, schedules, instructors, pools] = await Promise.all([
-    AnnouncementService.findOne(),
-    ScheduleService.findParentTot(),
-    InstructorService.findAll(),
-    PoolService.findAll(),
+    getAnnouncement(),
+    getParentTotSchedules(),
+    getInstructors(),
+    getPools(),
   ])
 
   return (
@@ -28,8 +25,8 @@ export default async function ParentTot() {
           {schedules && schedules.length > 0 ? (
             <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
               {schedules.map(schedule => {
-                const instructor = instructors.find(instructor => instructor.id === schedule.instructorId)
-                const pool = pools.find(pool => pool.id === schedule.poolId)
+                const instructor = instructors?.find(instructor => instructor.id === schedule.instructorId)
+                const pool = pools?.find(pool => pool.id === schedule.poolId)
                 const name = `${instructor?.name ?? 'Private instructor'} at ${pool?.name}`
 
                 return (

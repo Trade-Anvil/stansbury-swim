@@ -1,14 +1,8 @@
 import Image from 'next/image'
-import { AnnouncementService } from '@/services/api/shared/announcementService'
-import { Announcement } from '@lesson-scheduler/shared'
+import { getAnnouncement } from '@/app/utils/public-data'
 
 export default async function Header() {
-  let announcement: Announcement | null = null
-  try {
-    announcement = await AnnouncementService.findOne()
-  } catch (error) {
-    console.error('Failed to fetch announcement:', error)
-  }
+  const announcement = await getAnnouncement()
 
   return (
     <div className="relative isolate px-6 pt-14 lg:px-8">

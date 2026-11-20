@@ -1,9 +1,9 @@
 import Image from 'next/image'
-import { InstructorService } from '@/services/api/shared/instructorService'
+import { getInstructors } from '@/app/utils/public-data'
 import { isStoredImage } from '@/app/utils/images'
 
 export default async function Instructors() {
-  const instructors = await InstructorService.findAll()
+  const instructors = (await getInstructors()) ?? []
 
   return (
     <div id="team" className="scroll-mt-24 bg-white py-12 md:py-10 lg:py-10">

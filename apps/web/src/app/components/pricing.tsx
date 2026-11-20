@@ -1,12 +1,12 @@
 import { CheckIcon } from '@heroicons/react/20/solid'
-import { ProductService } from '@/services/api/shared/productService'
+import { getProducts } from '@/app/utils/public-data'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default async function Pricing() {
-  const products = await ProductService.findAll()
+  const products = await getProducts()
 
   return (
     <div id="pricing" className="scroll-mt-24 bg-white py-24 sm:py-32">
@@ -21,8 +21,13 @@ export default async function Pricing() {
           We offer a variety of pricing plans for families of all sizes and interest level. Choose the one that best
           fits your needs.
         </div>
+        {!products && (
+          <p className="mt-10 text-center text-sm text-gray-500">
+            Prices are not loading right now. Please try again in a few minutes.
+          </p>
+        )}
         <div className="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 md:max-w-2xl md:grid-cols-2 lg:max-w-4xl xl:mx-0 xl:max-w-none xl:grid-cols-4">
-          {products.map(product => {
+          {(products ?? []).map(product => {
             const button = product.lessonType == 'group' ? 'View schedule' : 'Buy now'
             const href = product.lessonType == 'group' ? '#announcement' : '/dashboard/purchase'
             return (

@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
         <Heading level={1} className="mb-2 text-center">
           Stansbury Swim Privacy Policy
         </Heading>
-        <Text className="mb-1 text-center text-sm text-zinc-500">Last modified on April 27, 2026</Text>
+        <Text className="mb-1 text-center text-sm text-zinc-500">Last modified on November 20, 2026</Text>
         <div className="mt-6 space-y-6 text-left">
           <Text>
             Stansbury Swim ("us", "we", or "our") operates{' '}
@@ -110,9 +110,9 @@ export default function PrivacyPolicy() {
             <strong>Service providers:</strong> We share information with third parties that help us operate the
             Service, including payment processors (PayPal and Apple Pay) for processing transactions, transactional
             email providers (Resend) for sending account and lesson-related emails, hosting and infrastructure providers
-            (Vercel, MongoDB Atlas, Supabase, and Google Cloud), error monitoring (Sentry), and analytics (Vercel
-            Analytics). These providers are permitted to use the information only to perform services for us and are
-            bound by confidentiality obligations.
+            (Vercel, MongoDB Atlas, and Google Cloud), error monitoring (Sentry), and analytics (Vercel Analytics).
+            These providers are permitted to use the information only to perform services for us and are bound by
+            confidentiality obligations.
           </Text>
           <Text>
             <strong>Legal and safety:</strong> We may disclose information if we believe in good faith that it is

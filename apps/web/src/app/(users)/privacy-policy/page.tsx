@@ -110,9 +110,10 @@ export default function PrivacyPolicy() {
             <strong>Service providers:</strong> We share information with third parties that help us operate the
             Service, including payment processors (PayPal and Apple Pay) for processing transactions, transactional
             email providers (Resend) for sending account and lesson-related emails, hosting and infrastructure providers
-            (Vercel, MongoDB Atlas, and Google Cloud), error monitoring (Sentry), and analytics (Vercel Analytics).
-            These providers are permitted to use the information only to perform services for us and are bound by
-            confidentiality obligations.
+            (Vercel, Railway, MongoDB Atlas, and Google Cloud), bot protection on sign-up and password reset forms
+            (Cloudflare Turnstile), error monitoring (Sentry), and analytics (Vercel Analytics). These providers are
+            permitted to use the information only to perform services for us and are bound by confidentiality
+            obligations.
           </Text>
           <Text>
             <strong>Legal and safety:</strong> We may disclose information if we believe in good faith that it is
